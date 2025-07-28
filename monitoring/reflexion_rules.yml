@@ -1,0 +1,72 @@
+groups:
+  - name: reflexion_alerts
+    rules:
+      # High error rate
+      - alert: HighErrorRate
+        expr: rate(reflexion_requests_total{status=~"5.."}[5m]) / rate(reflexion_requests_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes"
+      
+      # High reflection failure rate
+      - alert: HighReflectionFailureRate
+        expr: rate(reflexion_reflection_failures_total[5m]) / rate(reflexion_reflections_total[5m]) > 0.2
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High reflection failure rate"
+          description: "Reflection failure rate is {{ $value | humanizePercentage }} for the last 10 minutes"
+      
+      # Memory usage high
+      - alert: HighMemoryUsage
+        expr: reflexion_memory_usage_bytes / reflexion_memory_limit_bytes > 0.8
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is {{ $value | humanizePercentage }} of limit"
+      
+      # Response time high
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(reflexion_request_duration_seconds_bucket[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High response time"
+          description: "95th percentile response time is {{ $value }}s"
+      
+      # LLM API errors
+      - alert: LLMAPIErrors
+        expr: rate(reflexion_llm_api_errors_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "LLM API errors detected"
+          description: "LLM API error rate is {{ $value }} errors/second"
+      
+      # Database connection issues
+      - alert: DatabaseConnectionFailures
+        expr: rate(reflexion_db_connection_errors_total[5m]) > 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database connection failures"
+          description: "Database connection errors detected: {{ $value }} errors/second"
+      
+      # Service down
+      - alert: ServiceDown
+        expr: up{job="reflexion"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Reflexion service is down"
+          description: "Reflexion service has been down for more than 1 minute"

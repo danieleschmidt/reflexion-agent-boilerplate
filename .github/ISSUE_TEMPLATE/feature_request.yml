@@ -1,0 +1,140 @@
+name: Feature Request
+description: Suggest an idea for this project
+title: "[FEATURE] "
+labels: ["enhancement", "triage-needed"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! 🚀
+        
+        Please provide as much detail as possible to help us understand your request.
+
+  - type: checkboxes
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before proceeding
+      options:
+        - label: I have searched for similar feature requests
+          required: true
+        - label: I have read the documentation and roadmap
+          required: true
+        - label: This feature is not already implemented
+          required: true
+
+  - type: dropdown
+    attributes:
+      label: Feature Category
+      description: What category does this feature belong to?
+      options:
+        - "Core Reflexion Engine"
+        - "Framework Adapters"
+        - "Memory Systems"
+        - "Evaluation & Metrics"
+        - "API & CLI"
+        - "Documentation"
+        - "DevOps & Infrastructure"
+        - "Performance"
+        - "Security"
+        - "Other"
+    validations:
+      required: true
+
+  - type: dropdown
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - "Low - Nice to have"
+        - "Medium - Would improve my workflow"
+        - "High - Essential for my use case"
+        - "Critical - Blocking my adoption"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like
+      placeholder: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Alternative Solutions
+      description: Describe alternatives you've considered
+      placeholder: A clear and concise description of any alternative solutions or features you've considered.
+
+  - type: textarea
+    attributes:
+      label: Use Case
+      description: Describe your specific use case
+      placeholder: |
+        How would you use this feature? Please provide:
+        - Your current workflow
+        - How this feature would improve it
+        - Expected outcomes
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Example Usage
+      description: Provide an example of how this feature would be used
+      placeholder: |
+        ```python
+        # Example code showing how the feature would be used
+        agent = ReflexionAgent(...)
+        result = agent.new_feature(...)
+        ```
+      render: python
+
+  - type: dropdown
+    attributes:
+      label: Framework Compatibility
+      description: Which frameworks should this feature support?
+      multiple: true
+      options:
+        - "AutoGen"
+        - "CrewAI"
+        - "LangChain"
+        - "Claude-Flow"
+        - "Framework-agnostic"
+        - "Not applicable"
+
+  - type: textarea
+    attributes:
+      label: Implementation Notes
+      description: Any thoughts on how this could be implemented?
+      placeholder: |
+        If you have ideas about implementation:
+        - Technical approach
+        - API design considerations
+        - Potential challenges
+        - Required dependencies
+
+  - type: textarea
+    attributes:
+      label: Additional Context
+      description: Add any other context, screenshots, or examples
+      placeholder: Any additional information that would help understand the feature request...
+
+  - type: checkboxes
+    attributes:
+      label: Contribution
+      description: Are you willing to contribute?
+      options:
+        - label: I would be willing to implement this feature
+        - label: I would be willing to help test this feature
+        - label: I would be willing to help document this feature
+        - label: I would be willing to provide feedback during development

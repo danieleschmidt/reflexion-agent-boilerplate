@@ -1,0 +1,95 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.tox
+.coverage
+.coverage.*
+.pytest_cache
+.mypy_cache
+.ruff_cache
+*.egg-info
+build
+dist
+
+# Virtual environments
+venv
+.venv
+env
+.env
+ENV
+
+# IDEs
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs
+
+# Documentation builds
+docs/_build
+site
+
+# Test artifacts
+htmlcov
+.coverage
+coverage.xml
+*.cover
+
+# Temporary files
+tmp
+temp
+.tmp
+.temp
+
+# Local config
+config/local_*
+.secrets
+*.local
+
+# Data directories
+data/raw
+data/processed
+models/checkpoints
+experiments
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Security
+*.pem
+*.key
+*.crt
+
+# Container runtime
+.dockerignore
+Dockerfile*
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Dependencies that should be installed fresh
+node_modules
+.npm

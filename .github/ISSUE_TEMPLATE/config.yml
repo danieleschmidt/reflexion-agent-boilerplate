@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/your-org/reflexion-agent-boilerplate/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 📖 Documentation
+    url: https://docs.your-org.com/reflexion
+    about: Check our comprehensive documentation
+  - name: 🎓 Tutorials
+    url: https://learn.your-org.com/reflexion
+    about: Learn how to use Reflexion Agent with step-by-step tutorials
+  - name: 💬 Discord Community
+    url: https://discord.gg/your-org
+    about: Join our Discord server for real-time help and community support

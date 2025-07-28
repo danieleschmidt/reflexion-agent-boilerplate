@@ -1,0 +1,42 @@
+{
+  "name": "reflexion-agent-boilerplate",
+  "version": "0.1.0",
+  "description": "Production-ready implementation of Reflexion for language agents",
+  "scripts": {
+    "test": "python -m pytest tests/ -v --cov=reflexion --cov-report=html --cov-report=term-missing",
+    "test:unit": "python -m pytest tests/unit/ -v",
+    "test:integration": "python -m pytest tests/integration/ -v",
+    "test:benchmark": "python -m pytest tests/benchmark/ -v --benchmark-only",
+    "lint": "flake8 reflexion/ tests/ && pylint reflexion/ tests/",
+    "format": "black reflexion/ tests/ && isort reflexion/ tests/",
+    "format:check": "black --check reflexion/ tests/ && isort --check-only reflexion/ tests/",
+    "typecheck": "mypy reflexion/",
+    "build": "python -m build",
+    "clean": "find . -type d -name '__pycache__' -exec rm -rf {} + || true && find . -name '*.pyc' -delete && rm -rf build/ dist/ *.egg-info/ .pytest_cache/ .coverage htmlcov/",
+    "dev": "python -m reflexion.cli dev",
+    "docs": "sphinx-build -b html docs/ docs/_build/html",
+    "docs:serve": "sphinx-autobuild docs/ docs/_build/html --host 0.0.0.0 --port 8000",
+    "security": "bandit -r reflexion/ && safety check",
+    "install:dev": "pip install -e '.[dev]'",
+    "precommit": "pre-commit run --all-files"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/reflexion-agent-boilerplate.git"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "reflexion",
+    "llm",
+    "autogen",
+    "crewai",
+    "langchain"
+  ],
+  "author": "Your Organization",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/your-org/reflexion-agent-boilerplate/issues"
+  },
+  "homepage": "https://github.com/your-org/reflexion-agent-boilerplate#readme"
+}
