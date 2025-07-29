@@ -1,0 +1,377 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Reflexion Agent Performance Dashboard",
+    "tags": ["reflexion", "performance", "ai-agents"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Reflection Execution Time",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(reflexion_execution_duration_seconds_bucket[5m]))",
+            "legendFormat": "95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.50, rate(reflexion_execution_duration_seconds_bucket[5m]))",
+            "legendFormat": "50th percentile"
+          }
+        ],
+        "yAxes": [
+          {
+            "unit": "s",
+            "min": 0
+          }
+        ],
+        "xAxis": {
+          "mode": "time"
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "Reflection Success Rate",
+        "type": "singlestat",
+        "targets": [
+          {
+            "expr": "rate(reflexion_success_total[5m]) / rate(reflexion_attempts_total[5m]) * 100",
+            "legendFormat": "Success Rate %"
+          }
+        ],
+        "valueMaps": [
+          {
+            "value": "null",
+            "text": "N/A"
+          }
+        ],
+        "sparkline": {
+          "show": true
+        },
+        "gauge": {
+          "show": true,
+          "min": 0,
+          "max": 100,
+          "thresholds": [
+            {
+              "color": "red",
+              "value": 0
+            },
+            {
+              "color": "yellow", 
+              "value": 70
+            },
+            {
+              "color": "green",
+              "value": 90
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        }
+      },
+      {
+        "id": 3,
+        "title": "Reflection Iterations Distribution",
+        "type": "bargauge",
+        "targets": [
+          {
+            "expr": "increase(reflexion_iterations_total[1h])",
+            "legendFormat": "{{iteration_count}} iterations"
+          }
+        ],
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 0,
+          "y": 8
+        }
+      },
+      {
+        "id": 4,
+        "title": "Memory Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "reflexion_memory_usage_bytes",
+            "legendFormat": "Memory Usage"
+          },
+          {
+            "expr": "reflexion_memory_episodes_count",
+            "legendFormat": "Stored Episodes"
+          }
+        ],
+        "yAxes": [
+          {
+            "unit": "bytes",
+            "min": 0
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 8,
+          "y": 8
+        }
+      },
+      {
+        "id": 5,
+        "title": "LLM API Latency",
+        "type": "heatmap",
+        "targets": [
+          {
+            "expr": "increase(reflexion_llm_request_duration_seconds_bucket[5m])",
+            "legendFormat": "{{le}}"
+          }
+        ],
+        "heatmap": {
+          "xBucketSize": null,
+          "yBucketSize": null,
+          "yBucketNumber": null,
+          "yBucketBound": "auto"
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 16,
+          "y": 8
+        }
+      },
+      {
+        "id": 6,
+        "title": "Reflection Quality Metrics",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "reflexion_quality_score",
+            "legendFormat": "Quality Score",
+            "format": "table"
+          },
+          {
+            "expr": "reflexion_improvement_score",
+            "legendFormat": "Improvement Score",
+            "format": "table"
+          }
+        ],
+        "columns": [
+          {
+            "text": "Task Type",
+            "value": "task_type"
+          },
+          {
+            "text": "Avg Quality",
+            "value": "Value #A"
+          },
+          {
+            "text": "Avg Improvement",
+            "value": "Value #B"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        }
+      },
+      {
+        "id": 7,
+        "title": "Error Rate by Category",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "increase(reflexion_errors_total[1h])",
+            "legendFormat": "{{error_type}}"
+          }
+        ],
+        "options": {
+          "pieType": "donut",
+          "displayLabels": ["name", "percent"]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 16
+        }
+      },
+      {
+        "id": 8,
+        "title": "Active Agents",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "reflexion_active_agents",
+            "legendFormat": "Active Agents"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "yellow",
+                  "value": 80
+                },
+                {
+                  "color": "red",
+                  "value": 100
+                }
+              ]
+            }
+          }
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 0,
+          "y": 24
+        }
+      },
+      {
+        "id": 9,
+        "title": "Token Usage Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(reflexion_tokens_consumed_total[5m])",
+            "legendFormat": "Tokens/sec"
+          }
+        ],
+        "unit": "short",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 6,
+          "y": 24
+        }
+      },
+      {
+        "id": 10,
+        "title": "Cache Hit Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(reflexion_cache_hits_total[5m]) / rate(reflexion_cache_requests_total[5m]) * 100",
+            "legendFormat": "Cache Hit %"
+          }
+        ],
+        "unit": "percent",
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "red",
+                  "value": 0
+                },
+                {
+                  "color": "yellow",
+                  "value": 50
+                },
+                {
+                  "color": "green", 
+                  "value": 80
+                }
+              ]
+            }
+          }
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 12,
+          "y": 24
+        }
+      },
+      {
+        "id": 11,
+        "title": "Reflection Trends",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "increase(reflexion_success_total[1h])",
+            "legendFormat": "Successful Reflections"
+          },
+          {
+            "expr": "increase(reflexion_failure_total[1h])",
+            "legendFormat": "Failed Reflections"
+          },
+          {
+            "expr": "increase(reflexion_timeout_total[1h])",
+            "legendFormat": "Timeouts"
+          }
+        ],
+        "yAxes": [
+          {
+            "min": 0,
+            "unit": "short"
+          }
+        ],
+        "legend": {
+          "show": true,
+          "alignAsTable": true,
+          "rightSide": true
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 18,
+          "x": 18,
+          "y": 24
+        }
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "30s",
+    "schemaVersion": 30,
+    "version": 1,
+    "links": [
+      {
+        "title": "Reflexion Documentation",
+        "url": "https://docs.your-org.com/reflexion",
+        "type": "absolute"
+      },
+      {
+        "title": "Alerts Dashboard",
+        "url": "/d/reflexion-alerts",
+        "type": "dashboards"
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "name": "Deployments",
+          "datasource": "prometheus",
+          "enable": true,
+          "expr": "increase(reflexion_deployments_total[5m])",
+          "iconColor": "blue",
+          "tags": ["deployment"]
+        }
+      ]
+    }
+  }
+}
