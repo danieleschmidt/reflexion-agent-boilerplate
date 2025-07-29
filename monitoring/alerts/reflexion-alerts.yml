@@ -1,0 +1,106 @@
+# Alerting rules for Reflexion Agent
+
+groups:
+  - name: reflexion_agent_alerts
+    rules:
+      # High error rate
+      - alert: HighErrorRate
+        expr: rate(reflexion_errors_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value }} errors per second"
+
+      # High response time
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(reflexion_request_duration_seconds_bucket[5m])) > 30
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value }} seconds"
+
+      # Memory usage too high
+      - alert: HighMemoryUsage
+        expr: (container_memory_usage_bytes{name="reflexion-app"} / container_spec_memory_limit_bytes{name="reflexion-app"}) > 0.9
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is {{ $value | humanizePercentage }}"
+
+      # CPU usage too high
+      - alert: HighCPUUsage
+        expr: rate(container_cpu_usage_seconds_total{name="reflexion-app"}[5m]) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage"
+          description: "CPU usage is {{ $value | humanizePercentage }}"
+
+      # Application down
+      - alert: ApplicationDown
+        expr: up{job="reflexion-agent"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Reflexion Agent application is down"
+          description: "The Reflexion Agent application has been down for more than 1 minute"
+
+      # Database connection issues
+      - alert: DatabaseConnectionFailure
+        expr: rate(reflexion_db_connection_errors_total[5m]) > 0.01
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database connection failures"
+          description: "Database connection error rate is {{ $value }} per second"
+
+      # Reflection timeout rate too high
+      - alert: HighReflectionTimeoutRate
+        expr: rate(reflexion_timeouts_total[5m]) > 0.05
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High reflection timeout rate"
+          description: "Reflection timeout rate is {{ $value }} per second"
+
+  - name: infrastructure_alerts
+    rules:
+      # Redis down
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis is down"
+          description: "Redis has been down for more than 1 minute"
+
+      # PostgreSQL down
+      - alert: PostgreSQLDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL has been down for more than 1 minute"
+
+      # Disk space low
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low disk space"
+          description: "Disk space is below 10% on {{ $labels.mountpoint }}"
