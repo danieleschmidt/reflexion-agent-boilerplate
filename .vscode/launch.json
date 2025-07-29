@@ -1,59 +1,136 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Python: Current File",
-            "type": "python",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}/src"
-            }
-        },
-        {
-            "name": "Python: CLI",
-            "type": "python",
-            "request": "launch",
-            "module": "reflexion.cli",
-            "args": ["${input:cliTask}"],
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}/src"
-            }
-        },
-        {
-            "name": "Python: Tests",
-            "type": "python",
-            "request": "launch",
-            "module": "pytest",
-            "args": ["tests/", "-v"],
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}/src"
-            }
-        },
-        {
-            "name": "Python: Benchmarks",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/benchmarks/run_all.py",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}/src"
-            }
-        }
-    ],
-    "inputs": [
-        {
-            "id": "cliTask",
-            "description": "Enter task for CLI",
-            "default": "Write a Python function",
-            "type": "promptString"
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Current File",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    },
+    {
+      "name": "Python: Reflexion CLI",
+      "type": "python",
+      "request": "launch",
+      "module": "reflexion.cli",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": ["${input:cliTask}"]
+    },
+    {
+      "name": "Python: Test Current File",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "${file}",
+        "-v",
+        "--cov=src/reflexion",
+        "--cov-report=term-missing"
+      ]
+    },
+    {
+      "name": "Python: Test All",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "tests/",
+        "-v",
+        "--cov=src/reflexion",
+        "--cov-report=html",
+        "--cov-report=term-missing"
+      ]
+    },
+    {
+      "name": "Python: Integration Tests",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "tests/integration/",
+        "-v",
+        "-m", "integration"
+      ]
+    },
+    {
+      "name": "Python: Performance Benchmarks",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "tests/performance/",
+        "-v",
+        "--benchmark-only",
+        "-m", "benchmark"
+      ]
+    },
+    {
+      "name": "Python: Benchmarks Script",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/benchmarks/run_all.py",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    },
+    {
+      "name": "Python: Debug Agent Example",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/examples/debug_agent.py",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src",
+        "DEBUG": "1",
+        "REFLEXION_LOG_LEVEL": "DEBUG"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "cliTask",
+      "description": "Enter task for Reflexion CLI",
+      "default": "Write a Python function to calculate fibonacci numbers",
+      "type": "promptString"
+    }
+  ]
 }

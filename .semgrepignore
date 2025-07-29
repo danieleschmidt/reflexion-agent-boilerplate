@@ -1,0 +1,57 @@
+# Semgrep ignore patterns
+# See: https://semgrep.dev/docs/ignoring-files-folders-code/
+
+# Standard directories to ignore
+node_modules/
+.git/
+.venv/
+venv/
+__pycache__/
+*.pyc
+build/
+dist/
+.tox/
+.pytest_cache/
+
+# Test files (be careful - you may want to scan some test files)
+tests/
+*test*.py
+test_*.py
+
+# Documentation
+docs/
+*.md
+*.rst
+
+# Configuration files that may contain patterns that trigger false positives
+*.json
+*.yaml
+*.yml
+*.toml
+*.ini
+*.cfg
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Log files
+*.log
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+
+# Specific patterns that cause false positives
+# Add specific file patterns here that you want Semgrep to ignore

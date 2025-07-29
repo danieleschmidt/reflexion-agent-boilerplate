@@ -1,0 +1,45 @@
+# Bandit security scanning configuration
+# https://bandit.readthedocs.io/
+
+[tool.bandit]
+# Directories to exclude from scanning
+exclude_dirs = [
+    "tests",
+    "benchmarks",
+    ".venv",
+    "venv",
+    "build",
+    "dist"
+]
+
+# Test IDs to skip (be cautious about skipping security tests)
+skips = [
+    # B101: Test for use of assert - common in test files
+    # B601: Test for shell injection - if you're confident in your shell usage
+]
+
+# Test IDs to run (leave empty to run all)
+tests = []
+
+# Confidence levels: LOW, MEDIUM, HIGH
+# Only report issues with confidence level MEDIUM or higher
+confidence = "MEDIUM"
+
+# Severity levels: LOW, MEDIUM, HIGH
+# Only report issues with severity level MEDIUM or higher  
+severity = "MEDIUM"
+
+# Output format: csv, json, txt, yaml, xml
+format = "json"
+
+# Include full path in output
+full_path = true
+
+# Include test ID in output
+include_test_id = true
+
+# Include confidence level in output
+include_confidence = true
+
+# Include severity level in output
+include_severity = true

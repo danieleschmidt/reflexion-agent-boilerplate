@@ -1,0 +1,210 @@
+# GitHub Actions Security Workflow Template
+# Copy this file to .github/workflows/security.yml and customize as needed
+
+name: Security Scanning
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run security scans daily at 3 AM UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  codeql:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+      
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'python' ]
+        
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+        
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:${{matrix.language}}"
+
+  dependency-scan:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install safety pip-audit
+          pip install -e .
+          
+      - name: Run Safety scan
+        run: |
+          safety check --json --output safety-report.json || true
+          safety check --short-report
+          
+      - name: Run pip-audit
+        run: |
+          pip-audit --format=json --output=pip-audit-report.json || true
+          pip-audit --desc
+          
+      - name: Upload dependency scan results
+        uses: actions/upload-artifact@v3
+        with:
+          name: dependency-scan-results
+          path: |
+            safety-report.json
+            pip-audit-report.json
+
+  sast-scan:
+    name: Static Application Security Testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          
+      - name: Install SAST tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install bandit[toml] semgrep
+          
+      - name: Run Bandit scan
+        run: |
+          bandit -r src/ -f json -o bandit-report.json || true
+          bandit -r src/ -f txt
+          
+      - name: Run Semgrep scan
+        run: |
+          semgrep --config=auto --json --output=semgrep-report.json src/ || true
+          semgrep --config=auto src/
+          
+      - name: Upload SAST results
+        uses: actions/upload-artifact@v3
+        with:
+          name: sast-scan-results
+          path: |
+            bandit-report.json
+            semgrep-report.json
+
+  container-scan:
+    name: Container Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build Docker image
+        run: docker build -t reflexion-agent:scan .
+        
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'reflexion-agent:scan'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  secrets-scan:
+    name: Secrets Detection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Run TruffleHog OSS
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
+          extra_args: --debug --only-verified
+
+  license-scan:
+    name: License Compliance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pip-licenses
+          pip install -e .
+          
+      - name: Generate license report
+        run: |
+          pip-licenses --format=json --output-file=licenses.json
+          pip-licenses --format=markdown --output-file=LICENSES.md
+          
+      - name: Upload license report
+        uses: actions/upload-artifact@v3
+        with:
+          name: license-report
+          path: |
+            licenses.json
+            LICENSES.md
+
+  security-scorecard:
+    name: OSSF Scorecard
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      id-token: write
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          
+      - name: Run analysis
+        uses: ossf/scorecard-action@v2.3.1
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          publish_results: true
+          
+      - name: Upload SARIF results to dependency graph
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: results.sarif
