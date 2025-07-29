@@ -1,0 +1,145 @@
+version: '3.8'
+
+services:
+  reflexion-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    image: reflexion-agent:latest
+    container_name: reflexion-app
+    restart: unless-stopped
+    environment:
+      - PYTHONPATH=/app/src
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    networks:
+      - reflexion-network
+    depends_on:
+      - redis
+      - postgres
+    profiles:
+      - full
+
+  reflexion-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    image: reflexion-agent:dev
+    container_name: reflexion-dev
+    volumes:
+      - .:/app
+      - reflexion-cache:/home/appuser/.cache
+    environment:
+      - PYTHONPATH=/app/src
+      - LOG_LEVEL=DEBUG
+    working_dir: /app
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+    networks:
+      - reflexion-network
+    profiles:
+      - dev
+
+  redis:
+    image: redis:7-alpine
+    container_name: reflexion-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - reflexion-network
+    profiles:
+      - full
+      - dev
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: reflexion-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: reflexion
+      POSTGRES_USER: reflexion
+      POSTGRES_PASSWORD: reflexion_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - reflexion-network
+    profiles:
+      - full
+      - dev
+
+  nginx:
+    image: nginx:alpine
+    container_name: reflexion-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - reflexion-app
+    networks:
+      - reflexion-network
+    profiles:
+      - full
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: reflexion-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    networks:
+      - reflexion-network
+    profiles:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: reflexion-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/dashboards:/etc/grafana/provisioning/dashboards:ro
+    depends_on:
+      - prometheus
+    networks:
+      - reflexion-network
+    profiles:
+      - monitoring
+
+networks:
+  reflexion-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  postgres-data:
+  prometheus-data:
+  grafana-data:
+  reflexion-cache:
