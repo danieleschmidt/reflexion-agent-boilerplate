@@ -1,5 +1,5 @@
 # Multi-stage build for Python application
-FROM python:3.11-slim as builder
+FROM python:3.13-slim as builder
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -28,7 +28,7 @@ RUN pip install --upgrade pip setuptools wheel && \
     pip install -e ".[all]"
 
 # Production stage
-FROM python:3.11-slim as production
+FROM python:3.13-slim as production
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
