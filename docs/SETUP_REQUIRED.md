@@ -41,9 +41,23 @@ Add in `Settings > Secrets and variables > Actions`:
 - `.github/workflows/security.yml` - Security scanning
 - `.github/workflows/release.yml` - Automated releases
 
+### Workflow Setup Instructions
+1. Copy templates from `docs/workflows/` to `.github/workflows/`
+2. Review and adjust Python versions and dependencies
+3. Configure repository secrets as documented above
+4. Enable Actions in repository settings
+
+### Additional Automation
+- **Dependabot**: Automated dependency updates configured in `.github/dependabot.yml`
+- **Pre-commit**: Enhanced hooks configured in `.pre-commit-config.yaml`
+- **Issue Templates**: Feature requests and bug reports in `.github/ISSUE_TEMPLATE/`
+- **PR Template**: Standardized pull request template in `.github/pull_request_template.md`
+
 ### Workflow Templates
 Reference templates available in:
-- [Python Package GitHub Action](https://github.com/actions/starter-workflows/blob/main/ci/python-package.yml)
+- `docs/workflows/ci.yml.template` - Production-ready CI configuration
+- `docs/workflows/security.yml.template` - Comprehensive security checks
+- `docs/workflows/release.yml.template` - Automated semantic releases
 - [GitHub Actions for Python](https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python)
 
 ## Development Environment Setup
