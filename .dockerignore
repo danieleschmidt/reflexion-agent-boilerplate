@@ -67,8 +67,22 @@ node_modules
 config.local.*
 secrets.local.*
 .env.local
+.env
+
+# Security reports
+bandit-report.json
+safety-report.json  
+pip-audit-report.json
+
+# Benchmarks
+benchmark-results/
 
 # Docker
 .dockerignore
 Dockerfile*
 docker-compose*.yml
+
+# Temporary files
+tmp/
+temp/
+*.tmp

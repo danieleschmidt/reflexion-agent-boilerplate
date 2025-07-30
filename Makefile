@@ -1,6 +1,6 @@
 # Makefile for Reflexion Agent Boilerplate
 
-.PHONY: help install dev-install test test-unit test-integration test-cov clean lint format typecheck pre-commit benchmark docker-build docker-run setup-dev
+.PHONY: help install dev-install test test-unit test-integration test-cov clean lint format typecheck pre-commit benchmark docker-build docker-run setup-dev security ci-check
 
 # Default target
 help: ## Show this help message
@@ -30,12 +30,14 @@ test-cov: ## Run tests with coverage report
 	pytest tests/ -v --cov=src --cov-report=term-missing --cov-report=html
 
 # Code Quality
-lint: ## Run linting with flake8
+lint: ## Run linting with ruff and flake8
+	ruff check src/ tests/ benchmarks/
 	flake8 src/ tests/ benchmarks/
 
 format: ## Format code with black and sort imports
 	black src/ tests/ benchmarks/
 	isort src/ tests/ benchmarks/
+	ruff --fix src/ tests/ benchmarks/
 
 typecheck: ## Run type checking with mypy
 	mypy src/
@@ -43,8 +45,18 @@ typecheck: ## Run type checking with mypy
 pre-commit: ## Run all pre-commit hooks
 	pre-commit run --all-files
 
+# Security
+security: ## Run security checks
+	bandit -r src/ -f json -o bandit-report.json
+	safety check --json --output safety-report.json
+	pip-audit --format=json --output=pip-audit-report.json
+
 # Quality assurance
 quality: lint typecheck test ## Run all quality checks
+
+# CI/CD
+ci-check: lint typecheck security test benchmark ## Run all CI checks locally
+	@echo "All CI checks passed!"
 
 # Performance
 benchmark: ## Run performance benchmarks

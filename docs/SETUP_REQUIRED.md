@@ -36,15 +36,25 @@ Add in `Settings > Secrets and variables > Actions`:
 **Note**: The following workflow files require manual creation due to security restrictions:
 
 ### Required Files
-- `.github/workflows/ci.yml` - Continuous integration
-- `.github/workflows/quality.yml` - Code quality checks  
-- `.github/workflows/security.yml` - Security scanning
-- `.github/workflows/release.yml` - Automated releases
+- `.github/workflows/ci.yml` - Comprehensive CI pipeline
+- `.github/workflows/security.yml` - Advanced security scanning
+- `.github/workflows/release.yml` - Automated release process
 
-### Workflow Templates
-Reference templates available in:
-- [Python Package GitHub Action](https://github.com/actions/starter-workflows/blob/main/ci/python-package.yml)
-- [GitHub Actions for Python](https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python)
+### Complete Workflow Code
+The full workflow implementations are documented in the deployment guide (`docs/DEPLOYMENT.md`) under the "GitHub Actions" section. These include:
+
+1. **CI Workflow**: Multi-Python version testing, coverage, security checks, Docker builds
+2. **Security Workflow**: CodeQL analysis, Semgrep scanning, dependency checks, container scanning  
+3. **Release Workflow**: Automated PyPI publishing with SBOM generation
+
+### Setup Instructions
+1. Create `.github/workflows/` directory
+2. Copy workflow YAML from `docs/DEPLOYMENT.md` 
+3. Commit and push to enable automated CI/CD
+4. Configure repository secrets as documented above
+
+### Validation
+After setup, run `make ci-check` to validate all workflows locally.
 
 ## Development Environment Setup
 
