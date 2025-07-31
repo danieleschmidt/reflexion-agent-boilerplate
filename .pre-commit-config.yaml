@@ -1,51 +1,48 @@
-# Pre-commit hooks for code quality
+# Pre-commit hooks for Reflexion Agent Boilerplate
 # See https://pre-commit.com for more information
 
+default_stages: [commit]
+fail_fast: false
+
 repos:
+  # Pre-commit hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
-      - id: check-merge-conflict
       - id: check-yaml
+      - id: check-toml
+      - id: check-json
       - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+        args: ['--fix=lf']
 
+  # Python code formatting
   - repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 23.12.1
     hooks:
       - id: black
-        language_version: python3
+        args: [--line-length=88]
 
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.1.8
-    hooks:
-      - id: ruff
-        args: [--fix, --exit-non-zero-on-fix]
-
+  # Import sorting
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
       - id: isort
+        args: ["--profile", "black", "--line-length", "88"]
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
-    hooks:
-      - id: mypy
-        additional_dependencies: [types-requests]
-
+  # Security scanning
   - repo: https://github.com/PyCQA/bandit
     rev: 1.7.5
     hooks:
       - id: bandit
         args: ['-c', 'bandit.toml']
 
-  - repo: local
-    hooks:
-      - id: pytest-check
-        name: pytest-check
-        entry: pytest
-        language: system
-        pass_filenames: false
-        always_run: true
-        args: [tests/unit/, -v, --tb=short]
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit hooks
+  autofix_prs: true
+  autoupdate_schedule: weekly

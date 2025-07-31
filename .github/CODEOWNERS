@@ -1,0 +1,42 @@
+# CODEOWNERS file for Reflexion Agent Boilerplate
+# Global owners - require review for all changes
+* @maintainers
+
+# Core reflexion engine - requires architecture review
+/src/reflexion/core/ @maintainers @architecture-team
+
+# Framework adapters - requires adapter expertise
+/src/reflexion/adapters/ @maintainers @adapter-specialists
+
+# Memory systems - requires data architecture review
+/src/reflexion/memory/ @maintainers @data-team
+
+# Security and compliance
+/SECURITY.md @maintainers @security-team
+/bandit.toml @maintainers @security-team
+/.github/workflows/security.yml @maintainers @security-team
+
+# Documentation
+/docs/ @maintainers @docs-team
+/README.md @maintainers @docs-team
+/ARCHITECTURE.md @maintainers @architecture-team
+
+# CI/CD and infrastructure
+/.github/workflows/ @maintainers @devops-team
+/Dockerfile @maintainers @devops-team
+/docker-compose.yml @maintainers @devops-team
+/Makefile @maintainers @devops-team
+
+# Configuration
+/pyproject.toml @maintainers
+/tox.ini @maintainers
+/.pre-commit-config.yaml @maintainers
+
+# Monitoring and observability
+/monitoring/ @maintainers @ops-team
+/telemetry.py @maintainers @ops-team
+
+# Tests - require test team review for complex changes
+/tests/integration/ @maintainers @qa-team
+/tests/performance/ @maintainers @performance-team
+/benchmarks/ @maintainers @performance-team

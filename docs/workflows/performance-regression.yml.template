@@ -1,0 +1,201 @@
+# Performance Regression Testing Workflow Template
+# Automated performance testing to detect regressions
+# Manual setup required: Copy to .github/workflows/performance-regression.yml
+
+name: Performance Regression Testing
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run performance tests nightly at 3 AM UTC
+    - cron: '0 3 * * *'
+
+jobs:
+  benchmark-tests:
+    name: Benchmark Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run benchmarks
+        run: |
+          python benchmarks/run_all.py --output=benchmark-results.json
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'pytest'
+          output-file-path: benchmark-results.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          comment-on-alert: true
+          alert-threshold: '200%'
+          fail-on-alert: true
+
+  memory-profiling:
+    name: Memory Usage Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]" memory-profiler psutil
+
+      - name: Run memory profiling
+        run: |
+          python -m memory_profiler tests/performance/test_memory_usage.py
+
+      - name: Generate memory report
+        run: |
+          echo "# Memory Usage Report" >> memory-report.md
+          echo "Generated on: $(date)" >> memory-report.md
+          cat memory_profile.log >> memory-report.md
+
+      - name: Upload memory report
+        uses: actions/upload-artifact@v4
+        with:
+          name: memory-report
+          path: memory-report.md
+
+  load-testing:
+    name: Load Testing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]" locust
+
+      - name: Start application for testing
+        run: |
+          python -m reflexion.cli serve --port=8000 &
+          sleep 10
+
+      - name: Run load tests
+        run: |
+          locust -f tests/performance/locustfile.py --headless -u 10 -r 2 -t 60s --host=http://localhost:8000
+
+  performance-comparison:
+    name: Performance Comparison
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run PR benchmarks
+        run: |
+          python benchmarks/run_all.py --output=pr-benchmarks.json
+
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main-branch
+
+      - name: Install main branch dependencies
+        run: |
+          cd main-branch
+          python -m pip install -e ".[dev]"
+
+      - name: Run main branch benchmarks
+        run: |
+          cd main-branch
+          python benchmarks/run_all.py --output=main-benchmarks.json
+
+      - name: Compare performance
+        run: |
+          python scripts/compare_benchmarks.py \
+            main-branch/main-benchmarks.json \
+            pr-benchmarks.json \
+            --output=performance-comparison.md
+
+      - name: Comment PR with results
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const comparison = fs.readFileSync('performance-comparison.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comparison
+            });
+
+  performance-monitoring:
+    name: Performance Monitoring
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run performance monitoring
+        env:
+          PROMETHEUS_PUSHGATEWAY: ${{ secrets.PROMETHEUS_PUSHGATEWAY }}
+        run: |
+          python scripts/performance_monitor.py --push-metrics
+
+      - name: Update performance dashboard
+        run: |
+          echo "📊 Performance metrics updated in monitoring dashboard"
+          echo "🔗 View at: ${{ secrets.GRAFANA_DASHBOARD_URL }}"
