@@ -1,0 +1,147 @@
+version: '3.8'
+
+services:
+  devcontainer:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        VARIANT: "3.11"
+    volumes:
+      - ..:/workspace:cached
+      - ~/.ssh:/home/vscode/.ssh:ro
+      - ~/.gitconfig:/home/vscode/.gitconfig:ro
+      - vscode-extensions:/home/vscode/.vscode-server/extensions
+      - vscode-extensions-insiders:/home/vscode/.vscode-server-insiders/extensions
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+      - DATABASE_URL=postgresql://reflexion:password@postgres:5432/reflexion_dev
+      - REDIS_URL=redis://redis:6379/0
+      - PYTHONPATH=/workspace/src
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - reflexion-dev
+    command: sleep infinity
+
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: reflexion_dev
+      POSTGRES_USER: reflexion
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ../scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reflexion -d reflexion_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - reflexion-dev
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - reflexion-dev
+
+  prometheus:
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    volumes:
+      - ../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - reflexion-dev
+    profiles:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: false
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ../monitoring/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - reflexion-dev
+    profiles:
+      - monitoring
+
+  jupyter:
+    image: jupyter/minimal-notebook:latest
+    restart: unless-stopped
+    environment:
+      JUPYTER_ENABLE_LAB: "yes"
+      JUPYTER_TOKEN: "reflexion-dev"
+    volumes:
+      - ..:/home/jovyan/work:cached
+      - jupyter-data:/home/jovyan
+    ports:
+      - "8001:8888"
+    networks:
+      - reflexion-dev
+    profiles:
+      - jupyter
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - reflexion-dev
+    profiles:
+      - testing
+
+volumes:
+  vscode-extensions:
+  vscode-extensions-insiders:
+  postgres-data:
+  redis-data:
+  prometheus-data:
+  grafana-data:
+  jupyter-data:
+
+networks:
+  reflexion-dev:
+    driver: bridge

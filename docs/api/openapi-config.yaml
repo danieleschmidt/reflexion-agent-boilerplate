@@ -1,0 +1,322 @@
+# OpenAPI/Swagger Configuration for Reflexion Agent API
+# Generates comprehensive API documentation
+
+openapi: 3.0.3
+info:
+  title: Reflexion Agent Boilerplate API
+  description: |
+    Production-ready implementation of Reflexion for language agents.
+    
+    This API provides endpoints for:
+    - Creating and managing reflexive agents
+    - Executing tasks with self-reflection
+    - Managing episodic memory
+    - Monitoring performance metrics
+    - Framework integrations
+    
+    ## Authentication
+    Most endpoints require API key authentication via the `X-API-Key` header.
+    
+    ## Rate Limiting
+    API requests are rate-limited to prevent abuse:
+    - 100 requests per minute for authenticated users
+    - 10 requests per minute for anonymous users
+    
+    ## Error Handling
+    The API uses standard HTTP status codes and returns detailed error messages
+    in JSON format with the following structure:
+    ```json
+    {
+      "error": {
+        "code": "ERROR_CODE",
+        "message": "Human readable error message",
+        "details": "Additional context"
+      }
+    }
+    ```
+    
+  version: "0.1.0"
+  termsOfService: "https://your-org.com/terms"
+  contact:
+    name: Reflexion Team
+    url: "https://your-org.com/support"
+    email: "reflexion@your-org.com"
+  license:
+    name: Apache 2.0
+    url: "https://www.apache.org/licenses/LICENSE-2.0.html"
+
+servers:
+  - url: https://api.your-org.com/v1
+    description: Production server
+  - url: https://staging-api.your-org.com/v1
+    description: Staging server
+  - url: http://localhost:8000/v1
+    description: Development server
+
+security:
+  - ApiKeyAuth: []
+  - BearerAuth: []
+
+paths:
+  /agents:
+    get:
+      summary: List reflexive agents
+      description: Retrieve a list of all configured reflexive agents
+      tags: [Agents]
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of agents to return
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: offset
+          in: query
+          description: Number of agents to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  agents:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Agent'
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+
+    post:
+      summary: Create reflexive agent
+      description: Create a new reflexive agent with specified configuration
+      tags: [Agents]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAgentRequest'
+      responses:
+        '201':
+          description: Agent created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        '400':
+          description: Invalid request
+        '409':
+          description: Agent with this name already exists
+
+  /agents/{agent_id}/execute:
+    post:
+      summary: Execute task with reflexion
+      description: Execute a task using the specified agent with reflexion capabilities
+      tags: [Execution]
+      parameters:
+        - name: agent_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecuteTaskRequest'
+      responses:
+        '200':
+          description: Task executed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResult'
+
+  /memory/episodes:
+    get:
+      summary: Retrieve memory episodes
+      description: Get episodic memory entries with optional filtering
+      tags: [Memory]
+      parameters:
+        - name: agent_id
+          in: query
+          schema:
+            type: string
+        - name: outcome
+          in: query
+          schema:
+            type: string
+            enum: [success, failure]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: Memory episodes retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  episodes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MemoryEpisode'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Agent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        configuration:
+          $ref: '#/components/schemas/AgentConfiguration'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    AgentConfiguration:
+      type: object
+      properties:
+        llm_model:
+          type: string
+          example: "gpt-4"
+        max_iterations:
+          type: integer
+          default: 3
+        reflection_type:
+          type: string
+          enum: [binary, scalar, structured]
+        memory_type:
+          type: string
+          enum: [episodic, structured]
+
+    CreateAgentRequest:
+      type: object
+      required:
+        - name
+        - configuration
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        configuration:
+          $ref: '#/components/schemas/AgentConfiguration'
+
+    ExecuteTaskRequest:
+      type: object
+      required:
+        - task
+      properties:
+        task:
+          type: string
+          description: The task to execute
+        success_criteria:
+          type: string
+          description: Criteria for determining task success
+        context:
+          type: object
+          description: Additional context for task execution
+
+    ExecutionResult:
+      type: object
+      properties:
+        task_id:
+          type: string
+          format: uuid
+        output:
+          type: string
+        success:
+          type: boolean
+        iterations:
+          type: integer
+        reflections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reflection'
+        execution_time:
+          type: number
+          format: float
+
+    Reflection:
+      type: object
+      properties:
+        iteration:
+          type: integer
+        self_critique:
+          type: string
+        improvement_strategy:
+          type: string
+        confidence_score:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+
+    MemoryEpisode:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        agent_id:
+          type: string
+        task:
+          type: string
+        outcome:
+          type: string
+          enum: [success, failure]
+        output:
+          type: string
+        reflections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reflection'
+        lessons_learned:
+          type: array
+          items:
+            type: string
+        timestamp:
+          type: string
+          format: date-time
+
+tags:
+  - name: Agents
+    description: Agent management operations
+  - name: Execution
+    description: Task execution with reflexion
+  - name: Memory
+    description: Episodic memory operations
+  - name: Metrics
+    description: Performance and monitoring metrics

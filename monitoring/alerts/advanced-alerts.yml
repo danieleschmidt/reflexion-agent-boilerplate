@@ -1,0 +1,179 @@
+# Advanced Alerting Rules for Reflexion Agent
+# Extends basic alerts with comprehensive monitoring
+
+groups:
+  - name: reflexion.performance.advanced
+    rules:
+      - alert: ReflexionLatencyP99High
+        expr: histogram_quantile(0.99, rate(reflexion_task_duration_seconds_bucket[5m])) > 30
+        for: 2m
+        labels:
+          severity: warning
+          component: reflexion-engine
+        annotations:
+          summary: "Reflexion P99 latency is high"
+          description: "99th percentile task execution time is {{ $value }}s, exceeding 30s threshold"
+          runbook_url: "https://docs.your-org.com/runbooks/reflexion-performance"
+
+      - alert: ReflexionMemoryLeakDetected
+        expr: increase(process_resident_memory_bytes[1h]) > 100 * 1024 * 1024
+        for: 15m
+        labels:
+          severity: critical
+          component: memory-management
+        annotations:
+          summary: "Memory leak detected in Reflexion process"
+          description: "Memory usage increased by {{ $value | humanize1024 }} in the last hour"
+
+      - alert: ReflexionReflectionLoopStuck
+        expr: reflexion_active_reflections > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: reflexion-engine
+        annotations:
+          summary: "Multiple reflexion loops appear stuck"
+          description: "{{ $value }} active reflections detected, possible infinite loop"
+
+  - name: reflexion.quality.advanced
+    rules:
+      - alert: ReflexionSuccessRateDegraded
+        expr: (
+            rate(reflexion_tasks_completed_total{outcome="success"}[15m]) /
+            rate(reflexion_tasks_completed_total[15m])
+          ) < 0.7
+        for: 10m
+        labels:
+          severity: warning
+          component: task-execution
+        annotations:
+          summary: "Reflexion task success rate is below threshold"
+          description: "Success rate is {{ $value | humanizePercentage }}, below 70% threshold"
+
+      - alert: ReflexionReflectionEffectivenessLow
+        expr: avg_over_time(reflexion_improvement_score[1h]) < 0.3
+        for: 30m
+        labels:
+          severity: warning
+          component: reflection-quality
+        annotations:
+          summary: "Reflexion improvement effectiveness is low"
+          description: "Average improvement score is {{ $value }}, below 0.3 threshold"
+
+  - name: reflexion.infrastructure.advanced
+    rules:
+      - alert: ReflexionDatabaseConnectionPoolExhausted
+        expr: reflexion_db_pool_active_connections >= reflexion_db_pool_max_connections * 0.9
+        for: 2m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "Database connection pool nearly exhausted"
+          description: "{{ $value }} active connections out of {{ reflexion_db_pool_max_connections }} maximum"
+
+      - alert: ReflexionRedisConnectionFailures
+        expr: rate(reflexion_redis_connection_errors_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          component: cache
+        annotations:
+          summary: "Redis connection failures detected"
+          description: "{{ $value }} Redis connection errors per second"
+
+      - alert: ReflexionLLMApiRateLimited
+        expr: rate(reflexion_llm_api_rate_limit_errors_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+          component: llm-integration
+        annotations:
+          summary: "LLM API rate limiting detected"
+          description: "{{ $value }} rate limit errors per second from LLM provider"
+
+  - name: reflexion.security.advanced
+    rules:
+      - alert: ReflexionUnauthorizedAccess
+        expr: rate(reflexion_http_requests_total{status=~"401|403"}[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+          component: security
+        annotations:
+          summary: "Unauthorized access attempts detected"
+          description: "{{ $value }} unauthorized requests per second"
+
+      - alert: ReflexionSecurityScanAnomalies
+        expr: reflexion_security_scan_violations_total > 0
+        for: 0m
+        labels:
+          severity: critical
+          component: security
+        annotations:
+          summary: "Security scan violations detected"
+          description: "{{ $value }} security violations found in latest scan"
+
+  - name: reflexion.business.advanced
+    rules:
+      - alert: ReflexionUserExperienceDegraded
+        expr: avg_over_time(reflexion_user_satisfaction_score[1h]) < 3.5
+        for: 30m
+        labels:
+          severity: warning
+          component: user-experience
+        annotations:
+          summary: "User satisfaction score is low"
+          description: "Average satisfaction score is {{ $value }}/5.0 in the last hour"
+
+      - alert: ReflexionCostAnomalyDetected
+        expr: increase(reflexion_llm_api_cost_total[1h]) > 100
+        for: 0m
+        labels:
+          severity: warning
+          component: cost-management
+        annotations:
+          summary: "Unusual increase in LLM API costs"
+          description: "API costs increased by ${{ $value }} in the last hour"
+
+      - alert: ReflexionKnowledgeRetentionLow
+        expr: reflexion_memory_recall_accuracy < 0.8
+        for: 15m
+        labels:
+          severity: warning
+          component: memory-system
+        annotations:
+          summary: "Memory recall accuracy is below threshold"
+          description: "Memory recall accuracy is {{ $value | humanizePercentage }}, below 80%"
+
+  - name: reflexion.operational.advanced
+    rules:
+      - alert: ReflexionBackupFailure
+        expr: time() - reflexion_last_successful_backup_timestamp > 86400
+        for: 0m
+        labels:
+          severity: critical
+          component: backup-system
+        annotations:
+          summary: "Memory backup has not completed successfully in 24 hours"
+          description: "Last successful backup was {{ $value | humanizeDuration }} ago"
+
+      - alert: ReflexionConfigDrift
+        expr: reflexion_config_drift_detected > 0
+        for: 0m
+        labels:
+          severity: warning
+          component: configuration
+        annotations:
+          summary: "Configuration drift detected"
+          description: "{{ $value }} configuration parameters have drifted from expected values"
+
+      - alert: ReflexionVersionSkewDetected
+        expr: count(count by (version) (reflexion_version_info)) > 1
+        for: 5m
+        labels:
+          severity: warning
+          component: deployment
+        annotations:
+          summary: "Multiple Reflexion versions detected"
+          description: "{{ $value }} different versions running simultaneously"

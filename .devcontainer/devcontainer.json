@@ -1,0 +1,269 @@
+{
+  "name": "Reflexion Agent Development",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "devcontainer",
+  "workspaceFolder": "/workspace",
+  
+  // Features to add to the dev container
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "username": "vscode",
+      "userUid": "1000",
+      "userGid": "1000",
+      "upgradePackages": true
+    },
+    "ghcr.io/devcontainers/features/python:2": {
+      "version": "3.11",
+      "installTools": true,
+      "optimize": true,
+      "enableShared": true,
+      "installJupyterlab": true,
+      "configureGitSafeDirectory": true
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18",
+      "nodeGypDependencies": true,
+      "installYarnUsingApt": true
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "enableNonRootDocker": true,
+      "moby": true
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "ppa": true,
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/git-lfs:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    }
+  },
+
+  // VS Code customizations
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Python development
+        "ms-python.python",
+        "ms-python.flake8",
+        "ms-python.black-formatter", 
+        "ms-python.isort",
+        "ms-python.mypy-type-checker",
+        "ms-python.pylint",
+        "charliermarsh.ruff",
+        
+        // Testing
+        "ms-python.pytest",
+        "hbenl.vscode-test-explorer",
+        "littlefoxteam.vscode-python-test-adapter",
+        
+        // Git and version control
+        "eamodio.gitlens",
+        "mhutchie.git-graph",
+        "GitHub.vscode-pull-request-github",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        
+        // Docker and containers
+        "ms-azuretools.vscode-docker",
+        "ms-vscode-remote.remote-containers",
+        
+        // Documentation
+        "yzhang.markdown-all-in-one",
+        "shd101wyy.markdown-preview-enhanced",
+        "davidanson.vscode-markdownlint",
+        
+        // Code quality and formatting
+        "esbenp.prettier-vscode",
+        "editorconfig.editorconfig",
+        "streetsidesoftware.code-spell-checker",
+        
+        // YAML and JSON
+        "redhat.vscode-yaml",
+        "ms-vscode.vscode-json",
+        
+        // Productivity
+        "ms-vscode.vscode-todo-highlight",
+        "gruntfuggly.todo-tree",
+        "aaron-bond.better-comments",
+        "oderwat.indent-rainbow",
+        "ms-vscode.wordcount",
+        
+        // Security
+        "ms-vscode.vscode-security-explorer",
+        "snyk-security.snyk-vulnerability-scanner",
+        
+        // API development
+        "humao.rest-client",
+        "42crunch.vscode-openapi",
+        
+        // Database
+        "mtxr.sqltools",
+        "mtxr.sqltools-driver-pg",
+        "cweijan.vscode-redis-client"
+      ],
+      
+      "settings": {
+        // Python configuration
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": false,
+        "python.linting.flake8Enabled": true,
+        "python.linting.mypyEnabled": true,
+        "python.linting.banditEnabled": true,
+        "python.formatting.provider": "black",
+        "python.formatting.blackArgs": ["--line-length=88"],
+        "python.sortImports.args": ["--profile", "black"],
+        "python.testing.pytestEnabled": true,
+        "python.testing.unittestEnabled": false,
+        "python.testing.pytestArgs": ["tests"],
+        
+        // Editor configuration
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": true,
+          "source.fixAll.flake8": true,
+          "source.fixAll.ruff": true
+        },
+        "editor.rulers": [88],
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false,
+        
+        // Files configuration
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true,
+        "files.trimFinalNewlines": true,
+        "files.eol": "\\n",
+        "files.exclude": {
+          "**/__pycache__": true,
+          "**/*.pyc": true,
+          "**/.pytest_cache": true,
+          "**/.mypy_cache": true,
+          "**/.ruff_cache": true,
+          "**/htmlcov": true,
+          "**/.coverage": true
+        },
+        
+        // Terminal configuration
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": {
+            "path": "/bin/zsh",
+            "args": ["-l"]
+          }
+        },
+        
+        // Git configuration
+        "git.autofetch": true,
+        "git.enableCommitSigning": true,
+        "git.confirmSync": false,
+        "gitlens.hovers.currentLine.over": "line",
+        "gitlens.currentLine.enabled": false,
+        
+        // Security
+        "security.workspace.trust.enabled": true,
+        "security.workspace.trust.banner": "always",
+        
+        // Docker
+        "docker.showStartPage": false,
+        
+        // JSON and YAML
+        "yaml.schemas": {
+          "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml",
+          "https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json": "docker-compose*.yml"
+        },
+        
+        // Spell checking
+        "cSpell.words": [
+          "reflexion",
+          "autogen",
+          "crewai",
+          "langchain",
+          "embeddings",
+          "episodic",
+          "observability",
+          "telemetry"
+        ]
+      }
+    }
+  },
+
+  // Container lifecycle scripts
+  "postCreateCommand": "bash .devcontainer/postCreate.sh",
+  "postStartCommand": "bash .devcontainer/postStart.sh",
+
+  // Port forwarding
+  "forwardPorts": [
+    8000,  // API server
+    8080,  // Documentation
+    9090,  // Prometheus
+    3000,  // Grafana
+    5432,  // PostgreSQL
+    6379,  // Redis
+    8001   // Jupyter
+  ],
+  "portsAttributes": {
+    "8000": {
+      "label": "API Server",
+      "onAutoForward": "notify"
+    },
+    "8080": {
+      "label": "Documentation",
+      "onAutoForward": "silent"
+    },
+    "9090": {
+      "label": "Prometheus",
+      "onAutoForward": "silent"
+    },
+    "3000": {
+      "label": "Grafana",
+      "onAutoForward": "silent"
+    },
+    "8001": {
+      "label": "Jupyter Lab",
+      "onAutoForward": "notify"
+    }
+  },
+
+  // Container configuration
+  "shutdownAction": "stopCompose",
+  "updateContentCommand": "pip install -e '.[dev]'",
+  
+  // Mount the host's SSH keys and git config
+  "mounts": [
+    "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=cached"
+  ],
+
+  // Environment variables
+  "containerEnv": {
+    "ENVIRONMENT": "development",
+    "DEBUG": "true",
+    "LOG_LEVEL": "DEBUG",
+    "PYTHONPATH": "/workspace/src",
+    "PYTEST_CURRENT_TEST": "true"
+  },
+
+  // Remote user configuration
+  "remoteUser": "vscode",
+  "userEnvProbe": "loginInteractiveShell",
+  
+  // Override the command that the container runs
+  "overrideCommand": false,
+  
+  // Initialize the container with a shell command
+  "initializeCommand": "echo 'Initializing Reflexion development container...'",
+  
+  // Add labels to the container
+  "runArgs": [
+    "--label=project=reflexion-agent",
+    "--label=environment=development"
+  ]
+}

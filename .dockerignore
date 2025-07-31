@@ -1,74 +1,126 @@
-# Git
+# Docker ignore file for Reflexion Agent Boilerplate
+# Optimizes build context and improves security
+
+# Version control
 .git
 .gitignore
+.gitattributes
 
-# Python
-__pycache__
-*.py[codz]
+# Documentation
+README.md
+CHANGELOG.md
+ARCHITECTURE.md
+docs/
+*.md
+*.rst
+
+# Python cache and artifacts
+__pycache__/
+*.py[cod]
 *$py.class
 *.so
 .Python
-build
-develop-eggs
-dist
-downloads
-eggs
-.eggs
-lib
-lib64
-parts
-sdist
-var
-wheels
-*.egg-info
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
 .installed.cfg
 *.egg
-.pytest_cache
-.coverage
-htmlcov
-.mypy_cache
-.ruff_cache
 
 # Virtual environments
-venv
+.env
 .venv
-env
-ENV
-env.bak
-venv.bak
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
-# IDEs
-.vscode
-.idea
+# IDE files
+.vscode/
+.idea/
 *.swp
 *.swo
+*~
 
-# OS
-.DS_Store
-Thumbs.db
+# Testing and coverage
+.tox/
+.coverage
+.pytest_cache/
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+test-results*.xml
+coverage*.xml
+bandit-report.*
+safety-report.*
 
-# Documentation
-docs/_build
+# CI/CD
+.github/
+.travis.yml
+.circleci/
+azure-pipelines.yml
+Jenkinsfile
+
+# Local development
+docker-compose.override.yml
+.env.local
+.env.development
+.env.test
+
+# Benchmarks and performance data
+benchmarks/results/
+*.prof
+*.pstats
 
 # Logs
 *.log
 logs/
 
-# Test artifacts
-.tox
-.nox
-coverage.xml
+# Temporary files
+tmp/
+temp/
+.tmp/
 
-# Development
-.pre-commit-cache
-node_modules
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-# Local configuration
-config.local.*
-secrets.local.*
-.env.local
+# Security sensitive files
+*.pem
+*.key
+*.crt
+secrets/
+.secrets/
 
-# Docker
-.dockerignore
-Dockerfile*
-docker-compose*.yml
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+
+# Exclude everything in tests directory
+tests/
+
+# Exclude development tools
+Makefile
+tox.ini
+.pre-commit-config.yaml
+pytest*.ini
