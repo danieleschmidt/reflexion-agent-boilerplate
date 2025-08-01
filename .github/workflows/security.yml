@@ -1,0 +1,84 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 2 * * 1'  # Weekly on Mondays at 2 AM UTC
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
+
+    - name: Run Bandit security scan
+      run: |
+        bandit -r src/ -f sarif -o bandit.sarif || true
+
+    - name: Upload Bandit results to GitHub Security
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: bandit.sarif
+
+    - name: Run Safety dependency scan
+      run: |
+        safety check --json --output safety-report.json || true
+
+    - name: Run pip-audit
+      run: |
+        pip-audit --format=json --output=pip-audit-report.json || true
+
+    - name: Container security scan
+      run: |
+        docker build -t reflexion-agent:test .
+        # Trivy scan would go here if available
+        # trivy image reflexion-agent:test --format sarif --output trivy.sarif
+
+    - name: Upload security artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-reports
+        path: |
+          bandit.sarif
+          safety-report.json
+          pip-audit-report.json
+        retention-days: 30
+
+  codeql:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: python
+
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v3
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
