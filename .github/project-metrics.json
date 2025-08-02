@@ -1,0 +1,68 @@
+{
+  "project": {
+    "name": "reflexion-agent-boilerplate",
+    "description": "A comprehensive boilerplate for reflexion-based AI agents",
+    "version": "1.0.0",
+    "created": "2025-01-01T00:00:00Z",
+    "updated": "2025-08-02T00:00:00Z"
+  },
+  "metrics": {
+    "code_quality": {
+      "coverage_target": 85,
+      "coverage_current": 0,
+      "maintainability_index": 100,
+      "cyclomatic_complexity_max": 10,
+      "technical_debt_ratio": 0.0
+    },
+    "security": {
+      "vulnerability_count": 0,
+      "security_hotspots": 0,
+      "security_rating": "A",
+      "last_security_scan": null
+    },
+    "performance": {
+      "response_time_p95": null,
+      "throughput_rps": null,
+      "memory_usage_peak": null,
+      "cpu_usage_avg": null
+    },
+    "reliability": {
+      "uptime_percentage": 99.9,
+      "error_rate": 0.001,
+      "mttr_minutes": 5,
+      "mtbf_hours": 720
+    },
+    "development": {
+      "build_success_rate": 100,
+      "deployment_frequency": "weekly",
+      "lead_time_hours": 24,
+      "change_failure_rate": 0.05
+    },
+    "repository": {
+      "contributors": 0,
+      "commits_per_week": 0,
+      "pull_requests_open": 0,
+      "pull_requests_merged": 0,
+      "issues_open": 0,
+      "issues_closed": 0
+    }
+  },
+  "tracking": {
+    "enabled": true,
+    "collection_interval": "daily",
+    "retention_days": 90,
+    "export_formats": ["json", "csv", "prometheus"]
+  },
+  "alerts": {
+    "coverage_below_target": true,
+    "security_vulnerabilities": true,
+    "performance_degradation": true,
+    "build_failures": true
+  },
+  "reporting": {
+    "weekly_summary": true,
+    "monthly_dashboard": true,
+    "quarterly_review": true,
+    "stakeholder_reports": ["developers", "managers", "security"]
+  }
+}

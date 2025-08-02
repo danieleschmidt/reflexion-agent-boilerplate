@@ -1,0 +1,37 @@
+# Global code owners
+* @danieleschmidt
+
+# Core reflexion engine
+/src/reflexion/core/ @danieleschmidt
+
+# Security-related files
+/SECURITY.md @danieleschmidt
+/.github/workflows/security*.yml @danieleschmidt
+/bandit.toml @danieleschmidt
+/.bandit @danieleschmidt
+
+# CI/CD and automation
+/.github/workflows/ @danieleschmidt
+/scripts/ @danieleschmidt
+/Dockerfile @danieleschmidt
+/docker-compose.yml @danieleschmidt
+
+# Documentation
+/docs/ @danieleschmidt
+/README.md @danieleschmidt
+/CONTRIBUTING.md @danieleschmidt
+
+# Testing infrastructure
+/tests/ @danieleschmidt
+/pytest.ini @danieleschmidt
+/pytest-integration.ini @danieleschmidt
+
+# Configuration files
+/pyproject.toml @danieleschmidt
+/ruff.toml @danieleschmidt
+/.pre-commit-config.yaml @danieleschmidt
+/.editorconfig @danieleschmidt
+
+# Monitoring and observability
+/monitoring/ @danieleschmidt
+/docs/monitoring/ @danieleschmidt
