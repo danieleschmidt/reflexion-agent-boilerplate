@@ -1,4 +1,5 @@
 """Framework adapters for reflexion integration."""
 
-# Framework adapters would be implemented here
-# Examples: AutoGenAdapter, CrewAIAdapter, LangChainAdapter, etc.
+from .autogen import AutoGenReflexion, create_reflexive_autogen_agent
+
+__all__ = ["AutoGenReflexion", "create_reflexive_autogen_agent"]

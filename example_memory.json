@@ -1,0 +1,38 @@
+[
+  {
+    "episode_id": "-8443976870639337421",
+    "task": "Create a simple calculator function",
+    "success": true,
+    "iterations": 1,
+    "reflections": [],
+    "total_time": 6.175041198730469e-05,
+    "timestamp": "2025-08-04T13:31:49.149812",
+    "metadata": {
+      "example": "with_memory"
+    }
+  },
+  {
+    "episode_id": "4003780673903677285",
+    "task": "Write a function to reverse a string",
+    "success": true,
+    "iterations": 1,
+    "reflections": [],
+    "total_time": 1.71661376953125e-05,
+    "timestamp": "2025-08-04T13:31:49.150143",
+    "metadata": {
+      "example": "with_memory"
+    }
+  },
+  {
+    "episode_id": "4780719921013043147",
+    "task": "Implement binary search algorithm",
+    "success": true,
+    "iterations": 1,
+    "reflections": [],
+    "total_time": 2.1457672119140625e-05,
+    "timestamp": "2025-08-04T13:31:49.150598",
+    "metadata": {
+      "example": "with_memory"
+    }
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "environment": "production",
+  "region": "us-east-1",
+  "version": "1.0.0",
+  "debug": false,
+  "scaling": {
+    "min_instances": 2,
+    "max_instances": 10,
+    "target_cpu_utilization": 70.0,
+    "target_memory_utilization": 80.0
+  },
+  "monitoring": {
+    "log_level": "INFO",
+    "enable_metrics": true,
+    "enable_tracing": true
+  }
+}
