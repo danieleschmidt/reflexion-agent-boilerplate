@@ -1,9 +1,9 @@
 # reflexion-agent-boilerplate
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/your-org/reflexion-agent-boilerplate/ci.yml?branch=main)](https://github.com/your-org/reflexion-agent-boilerplate/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/danieleschmidt/reflexion-agent-boilerplate/ci.yml?branch=main)](https://github.com/danieleschmidt/reflexion-agent-boilerplate/actions)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Framework Support](https://img.shields.io/badge/frameworks-AutoGen%20|%20CrewAI%20|%20LangChain-green)](https://github.com/your-org/reflexion-agent-boilerplate)
+[![Framework Support](https://img.shields.io/badge/frameworks-AutoGen%20|%20CrewAI%20|%20LangChain-green)](https://github.com/danieleschmidt/reflexion-agent-boilerplate)
 
 Production-ready implementation of Reflexion (self-reflection + self-improvement) for language agents. Bolt self-evaluation and iterative refinement onto any LLM framework with minimal code changes.
 
@@ -40,7 +40,7 @@ pip install reflexion-agent-boilerplate
 ### From Source
 
 ```bash
-git clone https://github.com/your-org/reflexion-agent-boilerplate
+git clone https://github.com/danieleschmidt/reflexion-agent-boilerplate
 cd reflexion-agent-boilerplate
 pip install -e ".[all]"  # Install all framework adapters
 ```
@@ -419,7 +419,7 @@ from reflexion.telemetry import LangObservatoryExporter
 
 # Export reflection metrics
 exporter = LangObservatoryExporter(
-    endpoint="http://observatory.your-org.com",
+    endpoint="http://observatory.danieleschmidt.com",
     api_key="your-key"
 )
 
@@ -641,7 +641,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ```bash
 # Clone repo
-git clone https://github.com/your-org/reflexion-agent-boilerplate
+git clone https://github.com/danieleschmidt/reflexion-agent-boilerplate
 cd reflexion-agent-boilerplate
 
 # Install in dev mode
@@ -663,14 +663,14 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 - [Reflexion Paper](https://arxiv.org/abs/2303.11366) - Original paper
 - [AutoGen](https://github.com/microsoft/autogen) - Microsoft's agent framework
 - [CrewAI](https://github.com/joaomdmoura/crewAI) - Multi-agent orchestration
-- [Lang-Observatory](https://github.com/your-org/lang-observatory) - Metrics platform
+- [Lang-Observatory](https://github.com/danieleschmidt/lang-observatory) - Metrics platform
 
 ## 📞 Support
 
-- 📧 Email: reflexion@your-org.com
-- 💬 Discord: [Join our community](https://discord.gg/your-org)
-- 📖 Documentation: [Full docs](https://docs.your-org.com/reflexion)
-- 🎓 Tutorial: [Building Reflexive Agents](https://learn.your-org.com/reflexion)
+- 📧 Email: reflexion@danieleschmidt.com
+- 💬 Discord: [Join our community](https://discord.gg/danieleschmidt)
+- 📖 Documentation: [Full docs](https://docs.danieleschmidt.com/reflexion)
+- 🎓 Tutorial: [Building Reflexive Agents](https://learn.danieleschmidt.com/reflexion)
 
 ## 📚 Citation
 
