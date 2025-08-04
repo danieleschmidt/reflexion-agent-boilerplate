@@ -1,0 +1,114 @@
+[
+  {
+    "episode_id": "6204676436456332179",
+    "task": "Implement error handling for file operations",
+    "success": false,
+    "iterations": 3,
+    "reflections": [
+      {
+        "issues": [
+          "Output contains error messages",
+          "Multi-dimensional analysis needed"
+        ],
+        "improvements": [
+          "Address the underlying error conditions",
+          "Provide error handling and validation",
+          "Consider correctness, efficiency, and maintainability"
+        ],
+        "confidence": 0.8,
+        "score": 0.5
+      },
+      {
+        "issues": [
+          "Output contains error messages",
+          "Previous attempt (iteration 1) also failed",
+          "Multi-dimensional analysis needed"
+        ],
+        "improvements": [
+          "Address the underlying error conditions",
+          "Provide error handling and validation",
+          "Try a fundamentally different approach",
+          "Consider breaking down the task into smaller steps",
+          "Consider correctness, efficiency, and maintainability"
+        ],
+        "confidence": 0.8499999999999999,
+        "score": 0.5
+      }
+    ],
+    "total_time": 0.002767324447631836,
+    "timestamp": "2025-08-04T13:45:29.959002",
+    "metadata": {
+      "category": "error_handling",
+      "complexity": "medium"
+    }
+  },
+  {
+    "episode_id": "1050180328802417335",
+    "task": "Create input validation for user data",
+    "success": true,
+    "iterations": 1,
+    "reflections": [],
+    "total_time": 0.0005953311920166016,
+    "timestamp": "2025-08-04T13:45:29.960030",
+    "metadata": {
+      "category": "validation",
+      "complexity": "medium"
+    }
+  },
+  {
+    "episode_id": "-2081307262779290468",
+    "task": "Add error handling for network requests",
+    "success": false,
+    "iterations": 3,
+    "reflections": [
+      {
+        "issues": [
+          "Output contains error messages",
+          "Multi-dimensional analysis needed"
+        ],
+        "improvements": [
+          "Address the underlying error conditions",
+          "Provide error handling and validation",
+          "Consider correctness, efficiency, and maintainability"
+        ],
+        "confidence": 0.8,
+        "score": 0.5
+      },
+      {
+        "issues": [
+          "Output contains error messages",
+          "Previous attempt (iteration 1) also failed",
+          "Multi-dimensional analysis needed"
+        ],
+        "improvements": [
+          "Address the underlying error conditions",
+          "Provide error handling and validation",
+          "Try a fundamentally different approach",
+          "Consider breaking down the task into smaller steps",
+          "Consider correctness, efficiency, and maintainability"
+        ],
+        "confidence": 0.8499999999999999,
+        "score": 0.5
+      }
+    ],
+    "total_time": 0.0021021366119384766,
+    "timestamp": "2025-08-04T13:45:29.962633",
+    "metadata": {
+      "category": "error_handling",
+      "complexity": "medium"
+    }
+  },
+  {
+    "episode_id": "8925073541331500595",
+    "task": "Implement validation for API inputs",
+    "success": true,
+    "iterations": 1,
+    "reflections": [],
+    "total_time": 0.0008800029754638672,
+    "timestamp": "2025-08-04T13:45:29.964144",
+    "metadata": {
+      "category": "validation",
+      "complexity": "medium"
+    }
+  }
+]

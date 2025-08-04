@@ -1,0 +1,131 @@
+{
+  "version": "3.8",
+  "services": {
+    "reflexion-api": {
+      "build": {
+        "context": ".",
+        "target": "production"
+      },
+      "ports": [
+        "8000:8000"
+      ],
+      "environment": {
+        "REFLEXION_ENV": "production",
+        "REFLEXION_REGION": "us-east-1",
+        "REFLEXION_LOG_LEVEL": "INFO",
+        "PYTHONPATH": "/app"
+      },
+      "volumes": [
+        "./logs:/app/logs",
+        "./data:/app/data"
+      ],
+      "restart": "unless-stopped",
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "curl",
+          "-f",
+          "http://localhost:8000/health"
+        ],
+        "interval": "30s",
+        "timeout": "10s",
+        "retries": 3,
+        "start_period": "40s"
+      },
+      "depends_on": [
+        "redis",
+        "postgres"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "read_only": true,
+      "tmpfs": [
+        "/tmp",
+        "/app/logs"
+      ],
+      "deploy": {
+        "resources": {
+          "limits": {
+            "cpus": "2.0",
+            "memory": "2G"
+          },
+          "reservations": {
+            "cpus": "0.5",
+            "memory": "512M"
+          }
+        }
+      }
+    },
+    "redis": {
+      "image": "redis:7-alpine",
+      "ports": [
+        "6379:6379"
+      ],
+      "volumes": [
+        "redis_data:/data"
+      ],
+      "restart": "unless-stopped",
+      "command": "redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru"
+    },
+    "postgres": {
+      "image": "postgres:15-alpine",
+      "environment": {
+        "POSTGRES_DB": "reflexion",
+        "POSTGRES_USER": "reflexion",
+        "POSTGRES_PASSWORD": "reflexion_pass"
+      },
+      "ports": [
+        "5432:5432"
+      ],
+      "volumes": [
+        "postgres_data:/var/lib/postgresql/data",
+        "./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql"
+      ],
+      "restart": "unless-stopped"
+    },
+    "prometheus": {
+      "image": "prom/prometheus:latest",
+      "ports": [
+        "9090:9090"
+      ],
+      "volumes": [
+        "./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml",
+        "prometheus_data:/prometheus"
+      ],
+      "command": [
+        "--config.file=/etc/prometheus/prometheus.yml",
+        "--storage.tsdb.path=/prometheus",
+        "--web.console.libraries=/etc/prometheus/console_libraries",
+        "--web.console.templates=/etc/prometheus/consoles",
+        "--web.enable-lifecycle"
+      ],
+      "restart": "unless-stopped"
+    },
+    "grafana": {
+      "image": "grafana/grafana:latest",
+      "ports": [
+        "3000:3000"
+      ],
+      "environment": {
+        "GF_SECURITY_ADMIN_PASSWORD": "admin"
+      },
+      "volumes": [
+        "grafana_data:/var/lib/grafana",
+        "./monitoring/dashboards:/var/lib/grafana/dashboards"
+      ],
+      "restart": "unless-stopped"
+    }
+  },
+  "volumes": {
+    "redis_data": {},
+    "postgres_data": {},
+    "prometheus_data": {},
+    "grafana_data": {}
+  },
+  "networks": {
+    "default": {
+      "driver": "bridge"
+    }
+  }
+}

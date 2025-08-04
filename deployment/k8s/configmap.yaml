@@ -1,0 +1,11 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reflexion-config
+  namespace: reflexion-production
+data:
+  REFLEXION_ENV: "production"
+  REFLEXION_REGION: "us-east-1"
+  REFLEXION_LOG_LEVEL: "INFO"
+  PYTHONPATH: "/app"
