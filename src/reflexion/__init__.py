@@ -10,11 +10,18 @@ __author__ = "Your Organization"
 from .core.agent import ReflexionAgent
 from .core.optimized_agent import OptimizedReflexionAgent, AutoScalingReflexionAgent
 from .core.types import ReflectionType, ReflexionResult
+from .prompts import ReflectionPrompts, PromptDomain, CustomReflectionPrompts
+from .memory import EpisodicMemory, MemoryStore
 
 __all__ = [
     "ReflexionAgent", 
     "OptimizedReflexionAgent", 
     "AutoScalingReflexionAgent",
     "ReflectionType", 
-    "ReflexionResult"
+    "ReflexionResult",
+    "ReflectionPrompts",
+    "PromptDomain", 
+    "CustomReflectionPrompts",
+    "EpisodicMemory",
+    "MemoryStore"
 ]

@@ -1,4 +1,4 @@
-"""Core reflexion engine implementation."""
+"""Core reflexion engine implementation with advanced resilience."""
 
 import asyncio
 import json
@@ -14,6 +14,9 @@ from .exceptions import (
     RetryableError, SecurityError
 )
 from .logging_config import logger, metrics
+from .health import health_checker, HealthStatus
+from .retry import default_retry_manager, RetryConfig, with_retry
+from .resilience import resilience_manager, ResiliencePattern
 
 
 class LLMProvider:
@@ -143,13 +146,32 @@ class LLMProvider:
 
 
 class ReflexionEngine:
-    """Core engine for reflexion-based task execution with robust error handling."""
+    """Core engine for reflexion-based task execution with advanced resilience."""
 
     def __init__(self, **config):
-        """Initialize reflexion engine with configuration."""
+        """Initialize reflexion engine with enhanced resilience configuration."""
         self.config = config
         self.logger = logger
         self.metrics = metrics
+        
+        # Initialize resilience components
+        self.health_checker = health_checker
+        self.retry_manager = default_retry_manager
+        self.resilience_manager = resilience_manager
+        
+        # Configure health monitoring
+        if config.get('enable_health_checks', True):
+            self.health_checker.register_custom_check(
+                'reflexion_engine',
+                self._health_check_callback
+            )
+        
+        # Configure retry behavior
+        self.retry_config = RetryConfig(
+            max_attempts=config.get('max_retry_attempts', 3),
+            base_delay=config.get('retry_base_delay', 1.0),
+            max_delay=config.get('retry_max_delay', 30.0)
+        )
         
         # Configuration validation
         self._validate_config(config)
@@ -158,7 +180,82 @@ class ReflexionEngine:
         """Validate engine configuration."""
         # Add any engine-specific configuration validation here
         self.logger.info(f"ReflexionEngine initialized with config: {list(config.keys())}")
+    
+    async def _health_check_callback(self):
+        """Custom health check for reflexion engine."""
+        from .health import HealthCheckResult, HealthStatus
+        
+        try:
+            # Test basic functionality
+            test_result = self._execute_task(
+                "test health check",
+                "gpt-4",
+                0,
+                []
+            )
+            
+            if "Error" in test_result:
+                return HealthCheckResult(
+                    name="reflexion_engine",
+                    status=HealthStatus.WARNING,
+                    message="Engine responding but with errors"
+                )
+            else:
+                return HealthCheckResult(
+                    name="reflexion_engine", 
+                    status=HealthStatus.HEALTHY,
+                    message="Engine functioning normally"
+                )
+                
+        except Exception as e:
+            return HealthCheckResult(
+                name="reflexion_engine",
+                status=HealthStatus.CRITICAL,
+                message=f"Engine health check failed: {str(e)}"
+            )
 
+    async def execute_with_reflexion_async(
+        self,
+        task: str,
+        llm: str,
+        max_iterations: int,
+        reflection_type: ReflectionType,
+        success_threshold: float,
+        success_criteria: Optional[str] = None,
+        **kwargs
+    ) -> ReflexionResult:
+        """Execute task with comprehensive reflexion loop and resilience patterns."""
+        execution_id = f"exec_{int(time.time() * 1000)}"
+        start_time = time.time()
+        
+        # Apply resilience patterns
+        try:
+            return await self.resilience_manager.execute_with_resilience(
+                self._execute_reflexion_core,
+                f"reflexion_task_{execution_id}",
+                patterns=[
+                    ResiliencePattern.CIRCUIT_BREAKER,
+                    ResiliencePattern.TIMEOUT,
+                    ResiliencePattern.RATE_LIMITING
+                ],
+                fallback=self._fallback_execution,
+                task=task,
+                llm=llm,
+                max_iterations=max_iterations,
+                reflection_type=reflection_type,
+                success_threshold=success_threshold,
+                success_criteria=success_criteria,
+                execution_id=execution_id,
+                **kwargs
+            )
+        except Exception as e:
+            self.logger.error(f"Resilient execution failed for {execution_id}: {str(e)}")
+            # Fallback to synchronous execution
+            return self._execute_reflexion_core(
+                task, llm, max_iterations, reflection_type, 
+                success_threshold, success_criteria, execution_id, **kwargs
+            )
+    
     def execute_with_reflexion(
         self,
         task: str,
@@ -169,8 +266,47 @@ class ReflexionEngine:
         success_criteria: Optional[str] = None,
         **kwargs
     ) -> ReflexionResult:
-        """Execute task with comprehensive reflexion loop and error handling."""
-        execution_id = f"exec_{int(time.time() * 1000)}"
+        """Synchronous wrapper for reflexion execution with basic resilience."""
+        try:
+            # Try async execution with resilience if event loop available
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                # We're already in an async context, create new task
+                future = asyncio.ensure_future(
+                    self.execute_with_reflexion_async(
+                        task, llm, max_iterations, reflection_type,
+                        success_threshold, success_criteria, **kwargs
+                    )
+                )
+                return asyncio.get_event_loop().run_until_complete(future)
+            else:
+                return asyncio.run(
+                    self.execute_with_reflexion_async(
+                        task, llm, max_iterations, reflection_type,
+                        success_threshold, success_criteria, **kwargs
+                    )
+                )
+        except RuntimeError:
+            # No event loop available, fall back to synchronous execution
+            execution_id = f"exec_{int(time.time() * 1000)}"
+            return self._execute_reflexion_core(
+                task, llm, max_iterations, reflection_type,
+                success_threshold, success_criteria, execution_id, **kwargs
+            )
+
+    def _execute_reflexion_core(
+        self,
+        task: str,
+        llm: str,
+        max_iterations: int,
+        reflection_type: ReflectionType,
+        success_threshold: float,
+        success_criteria: Optional[str] = None,
+        execution_id: Optional[str] = None,
+        **kwargs
+    ) -> ReflexionResult:
+        """Core reflexion execution with comprehensive error handling."""
+        execution_id = execution_id or f"exec_{int(time.time() * 1000)}"
         start_time = time.time()
         reflections: List[Reflection] = []
         current_output = ""
@@ -493,3 +629,112 @@ class ReflexionEngine:
             return 'optimization'
         else:
             return 'general'
+    
+    def _fallback_execution(
+        self,
+        task: str,
+        llm: str,
+        max_iterations: int,
+        reflection_type: ReflectionType,
+        success_threshold: float,
+        success_criteria: Optional[str] = None,
+        execution_id: Optional[str] = None,
+        **kwargs
+    ) -> ReflexionResult:
+        """Fallback execution with reduced functionality but guaranteed response."""
+        execution_id = execution_id or f"fallback_{int(time.time() * 1000)}"
+        start_time = time.time()
+        
+        self.logger.warning(f"Using fallback execution for {execution_id}")
+        
+        try:
+            # Simplified execution with minimal reflexion
+            simple_output = f"Fallback response for task: {task[:100]}. " \
+                          f"Due to system constraints, providing simplified response."
+            
+            # Create minimal reflection
+            fallback_reflection = Reflection(
+                task=task,
+                output=simple_output,
+                success=False,  # Mark as not fully successful
+                score=0.4,  # Low score to indicate fallback
+                issues=["System constraints triggered fallback mode"],
+                improvements=["Retry when system resources are available"],
+                confidence=0.3,  # Low confidence in fallback response
+                timestamp=datetime.now().isoformat()
+            )
+            
+            result = ReflexionResult(
+                task=task,
+                output=simple_output,
+                success=False,
+                iterations=1,
+                reflections=[fallback_reflection],
+                total_time=time.time() - start_time,
+                metadata={
+                    "execution_mode": "fallback",
+                    "execution_id": execution_id,
+                    "reason": "system_constraints"
+                }
+            )
+            
+            self.logger.info(f"Fallback execution {execution_id} completed")
+            return result
+            
+        except Exception as e:
+            # Even fallback failed, return minimal error response
+            self.logger.error(f"Fallback execution also failed: {str(e)}")
+            
+            return ReflexionResult(
+                task=task,
+                output=f"System error: Unable to process task due to {str(e)}",
+                success=False,
+                iterations=0,
+                reflections=[],
+                total_time=time.time() - start_time,
+                metadata={
+                    "execution_mode": "error_fallback",
+                    "execution_id": execution_id,
+                    "error": str(e)
+                }
+            )
+    
+    async def get_system_health(self) -> Dict[str, Any]:
+        """Get comprehensive system health information."""
+        try:
+            # Run health checks
+            health_results = await self.health_checker.run_all_checks()
+            overall_status = self.health_checker.get_overall_status(health_results)
+            
+            # Get metrics
+            system_metrics = self.health_checker.get_system_metrics()
+            resilience_metrics = self.resilience_manager.get_resilience_metrics()
+            retry_stats = self.retry_manager.get_retry_stats()
+            
+            return {
+                "overall_status": overall_status.value,
+                "health_checks": {
+                    name: {
+                        "status": result.status.value,
+                        "message": result.message,
+                        "duration_ms": result.duration_ms
+                    }
+                    for name, result in health_results.items()
+                },
+                "system_metrics": {
+                    "cpu_percent": system_metrics.cpu_percent,
+                    "memory_percent": system_metrics.memory_percent,
+                    "disk_percent": system_metrics.disk_percent,
+                    "uptime_seconds": system_metrics.uptime_seconds
+                },
+                "resilience_metrics": resilience_metrics,
+                "retry_stats": retry_stats,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            self.logger.error(f"Failed to get system health: {str(e)}")
+            return {
+                "overall_status": "unknown",
+                "error": str(e),
+                "timestamp": datetime.now().isoformat()
+            }

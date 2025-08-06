@@ -1,0 +1,14 @@
+[
+  {
+    "episode_id": "-7695098047317198889",
+    "task": "Test task",
+    "success": true,
+    "iterations": 1,
+    "reflections": [],
+    "total_time": 0.1,
+    "timestamp": "2025-08-06T08:25:13.794268",
+    "metadata": {
+      "test": true
+    }
+  }
+]
