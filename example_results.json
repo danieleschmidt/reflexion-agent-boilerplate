@@ -1,0 +1,125 @@
+[
+  {
+    "name": "Basic Usage",
+    "success": true,
+    "result": "ReflexionResult(task='Write a Python function to calculate the factorial of a number', output='Task completed: Task: Write a Python function to calculate the factorial of a number\\n\\nPlease provide a complete solu...', success=False, iterations=3, reflections=[Reflection(task='Write a Python function to calculate the factorial of a number', output='Task completed: Task: Write a Python function to calculate the factorial of a number\\n\\nPlease provide a complete solu...', success=False, score=0.5, issues=['Custom success criteria not satisfied'], improvements=['Ensure all specified requirements are addressed'], confidence=0.58, timestamp='2025-08-08T03:11:32.583375'), Reflection(task='Write a Python function to calculate the factorial of a number', output='Task completed: Task: Write a Python function to calculate the factorial of a number\\n\\nPlease provide a complete solu...', success=False, score=0.5, issues=['Custom success criteria not satisfied', 'Previous attempt (iteration 1) also failed'], improvements=['Ensure all specified requirements are addressed', 'Try a fundamentally different approach', 'Consider breaking down the task into smaller steps'], confidence=0.75, timestamp='2025-08-08T03:11:32.584149')], total_time=0.004976987838745117, metadata={'llm': 'gpt-4', 'threshold': 0.8, 'execution_id': 'exec_1754622692579', 'final_score': 0.5})"
+  },
+  {
+    "name": "Domain-Specific Prompts",
+    "success": true,
+    "result": {
+      "software": "ReflexionResult(task='Implement a thread-safe cache with TTL support', output='Task completed: Task: Implement a thread-safe cache with TTL support\\n\\nPlease provide a complete solution.\\n\\nPrevious ...', success=False, iterations=2, reflections=[Reflection(task='Implement a thread-safe cache with TTL support', output='Task completed: Task: Implement a thread-safe cache with TTL support\\n\\nPlease provide a complete solution....', success=False, score=0.5, issues=['Custom success criteria not satisfied', 'Multi-dimensional analysis needed'], improvements=['Ensure all specified requirements are addressed', 'Consider correctness, efficiency, and maintainability'], confidence=0.7600000000000001, timestamp='2025-08-08T03:11:32.587870')], total_time=0.0016531944274902344, metadata={'llm': 'gpt-4', 'threshold': 0.8, 'execution_id': 'exec_1754622692587', 'final_score': 0.5})",
+      "data_analysis": "ReflexionResult(task='Analyze website traffic data and identify trends', output='Task completed: Task: Analyze website traffic data and identify trends\\n\\nPlease provide a complete solution.\\n\\nPreviou...', success=False, iterations=2, reflections=[Reflection(task='Analyze website traffic data and identify trends', output='Task completed: Task: Analyze website traffic data and identify trends\\n\\nPlease provide a complete solution....', success=False, score=0.5, issues=['Custom success criteria not satisfied', 'Multi-dimensional analysis needed'], improvements=['Ensure all specified requirements are addressed', 'Consider correctness, efficiency, and maintainability'], confidence=0.7600000000000001, timestamp='2025-08-08T03:11:32.589796')], total_time=0.0013463497161865234, metadata={'llm': 'gpt-4', 'threshold': 0.8, 'execution_id': 'exec_1754622692589', 'final_score': 0.5})"
+    }
+  },
+  {
+    "name": "Episodic Memory",
+    "success": true,
+    "result": {
+      "results": [
+        "ReflexionResult(task='Write a sorting algorithm', output='Task completed: Task: Write a sorting algorithm\\n\\nPlease provide a complete solution....', success=True, iterations=1, reflections=[], total_time=0.0008077621459960938, metadata={'llm': 'gpt-4', 'threshold': 0.8, 'execution_id': 'exec_1754622692591', 'final_score': 1.0})",
+        "ReflexionResult(task='Implement a binary search function', output='Task completed: Task: Implement a binary search function\\n\\nPlease provide a complete solution....', success=True, iterations=1, reflections=[], total_time=0.0009758472442626953, metadata={'llm': 'gpt-4', 'threshold': 0.8, 'execution_id': 'exec_1754622692592', 'final_score': 1.0})",
+        "ReflexionResult(task='Create a data structure for storing key-value pairs', output='Task completed: Task: Create a data structure for storing key-value pairs\\n\\nPlease provide a complete solution....', success=True, iterations=1, reflections=[], total_time=0.0008764266967773438, metadata={'llm': 'gpt-4', 'threshold': 0.8, 'execution_id': 'exec_1754622692594', 'final_score': 1.0})",
+        "ReflexionResult(task='Write a function to find duplicates in a list', output='Task completed: Task: Write a function to find duplicates in a list\\n\\nPlease provide a complete solution....', success=True, iterations=1, reflections=[], total_time=0.00087738037109375, metadata={'llm': 'gpt-4', 'threshold': 0.8, 'execution_id': 'exec_1754622692595', 'final_score': 1.0})"
+      ],
+      "patterns": {
+        "patterns": [],
+        "success_rate": 1.0,
+        "total_episodes": 4,
+        "successful_episodes": 4
+      },
+      "memory_path": "example_memory.json"
+    }
+  },
+  {
+    "name": "Custom Prompts",
+    "success": true,
+    "result": "ReflexionResult(task='Design a REST API for a blog platform with user management', output='Task completed: Task: Design a REST API for a blog platform with user management\\n\\nPlease provide a complete solution...', success=False, iterations=3, reflections=[Reflection(task='Design a REST API for a blog platform with user management', output='Task completed: Task: Design a REST API for a blog platform with user management\\n\\nPlease provide a complete solution...', success=False, score=0.5, issues=['Custom success criteria not satisfied', 'Multi-dimensional analysis needed'], improvements=['Ensure all specified requirements are addressed', 'Consider correctness, efficiency, and maintainability'], confidence=0.7600000000000001, timestamp='2025-08-08T03:11:32.598331'), Reflection(task='Design a REST API for a blog platform with user management', output='Task completed: Task: Design a REST API for a blog platform with user management\\n\\nPlease provide a complete solution...', success=False, score=0.5, issues=['Custom success criteria not satisfied', 'Previous attempt (iteration 1) also failed', 'Multi-dimensional analysis needed'], improvements=['Ensure all specified requirements are addressed', 'Try a fundamentally different approach', 'Consider breaking down the task into smaller steps', 'Consider correctness, efficiency, and maintainability'], confidence=0.8499999999999999, timestamp='2025-08-08T03:11:32.599060')], total_time=0.002090930938720703, metadata={'llm': 'gpt-4', 'threshold': 0.8, 'execution_id': 'exec_1754622692597', 'final_score': 0.5})"
+  },
+  {
+    "name": "Reflection Types",
+    "success": true,
+    "result": {
+      "Binary": {
+        "success": false,
+        "iterations": 2,
+        "reflections": 1,
+        "total_time": 0.001325368881225586,
+        "avg_confidence": 0.58
+      },
+      "Scalar": {
+        "success": false,
+        "iterations": 2,
+        "reflections": 1,
+        "total_time": 0.0012061595916748047,
+        "avg_confidence": 0.58
+      },
+      "Structured": {
+        "success": false,
+        "iterations": 2,
+        "reflections": 1,
+        "total_time": 0.0015056133270263672,
+        "avg_confidence": 0.7600000000000001
+      }
+    }
+  },
+  {
+    "name": "Error Handling",
+    "success": true,
+    "result": "ReflexionResult(task='error: simulate a complex error scenario for testing', output='Error: Could not complete the task due to unclear requirements.', success=False, iterations=4, reflections=[Reflection(task='error: simulate a complex error scenario for testing', output='Error: Could not complete the task due to unclear requirements.', success=False, score=0.5, issues=['Output contains error messages', 'Custom success criteria not satisfied'], improvements=['Address the underlying error conditions', 'Provide error handling and validation', 'Ensure all specified requirements are addressed'], confidence=0.8, timestamp='2025-08-08T03:11:32.606562'), Reflection(task='error: simulate a complex error scenario for testing', output='Error: Could not complete the task due to unclear requirements.', success=False, score=0.5, issues=['Output contains error messages', 'Custom success criteria not satisfied', 'Previous attempt (iteration 1) also failed'], improvements=['Address the underlying error conditions', 'Provide error handling and validation', 'Ensure all specified requirements are addressed', 'Try a fundamentally different approach', 'Consider breaking down the task into smaller steps'], confidence=0.8499999999999999, timestamp='2025-08-08T03:11:32.607218'), Reflection(task='error: simulate a complex error scenario for testing', output='Error: Could not complete the task due to unclear requirements.', success=False, score=0.5, issues=['Output contains error messages', 'Custom success criteria not satisfied', 'Previous attempt (iteration 2) also failed'], improvements=['Address the underlying error conditions', 'Provide error handling and validation', 'Ensure all specified requirements are addressed', 'Try a fundamentally different approach', 'Consider breaking down the task into smaller steps'], confidence=0.7999999999999999, timestamp='2025-08-08T03:11:32.607984')], total_time=0.0028543472290039062, metadata={'llm': 'gpt-4', 'threshold': 0.6, 'execution_id': 'exec_1754622692605', 'final_score': 0.5})"
+  },
+  {
+    "name": "Async Execution",
+    "success": true,
+    "result": {
+      "results": [
+        "ReflexionResult(task='Generate a creative story about time travel', output='Task completed: Task: Generate a creative story about time travel\\n\\nPlease provide a complete solution....', success=True, iterations=1, reflections=[], total_time=0.0006685256958007812, metadata={'llm': 'gpt-4', 'threshold': 0.8, 'execution_id': 'exec_1754622692609', 'final_score': 1.0})",
+        "ReflexionResult(task='Design a database schema for e-commerce', output='Task completed: Task: Design a database schema for e-commerce\\n\\nPlease provide a complete solution....', success=True, iterations=1, reflections=[], total_time=0.0006558895111083984, metadata={'llm': 'gpt-4', 'threshold': 0.8, 'execution_id': 'exec_1754622692610', 'final_score': 1.0})",
+        "ReflexionResult(task='Create a performance monitoring solution', output='Task completed: Task: Create a performance monitoring solution\\n\\nPlease provide a complete solution....', success=True, iterations=1, reflections=[], total_time=0.0006549358367919922, metadata={'llm': 'gpt-4', 'threshold': 0.8, 'execution_id': 'exec_1754622692611', 'final_score': 1.0})"
+      ],
+      "summary": {
+        "total_tasks": 3,
+        "successful": 3,
+        "total_time": 0.001979351043701172
+      }
+    }
+  },
+  {
+    "name": "Metrics & Evaluation",
+    "success": true,
+    "result": {
+      "by_difficulty": {
+        "Easy": {
+          "success": true,
+          "iterations": 1,
+          "time": 0.0006940364837646484,
+          "reflection_count": 0,
+          "avg_confidence": 0
+        },
+        "Medium": {
+          "success": true,
+          "iterations": 1,
+          "time": 0.0006906986236572266,
+          "reflection_count": 0,
+          "avg_confidence": 0
+        },
+        "Hard": {
+          "success": true,
+          "iterations": 1,
+          "time": 0.0006992816925048828,
+          "reflection_count": 0,
+          "avg_confidence": 0
+        }
+      },
+      "overall": {
+        "total_tasks": 3,
+        "total_success": 3,
+        "total_iterations": 3,
+        "total_time": 0.002084016799926758,
+        "success_rate": 1.0,
+        "avg_iterations": 1.0,
+        "avg_time": 0.0006946722666422526
+      }
+    }
+  }
+]

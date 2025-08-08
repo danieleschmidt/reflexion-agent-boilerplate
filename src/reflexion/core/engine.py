@@ -485,6 +485,8 @@ class ReflexionEngine:
     
     def _build_task_prompt(self, task: str, reflections: List[Reflection], iteration: int) -> str:
         """Build enhanced prompt with reflection context."""
+        from ..prompts import ReflectionPrompts, PromptDomain
+        
         base_prompt = f"Task: {task}\n\nPlease provide a complete solution."
         
         if reflections:
@@ -492,10 +494,47 @@ class ReflexionEngine:
             improvement_context = "\n".join(latest_reflection.improvements)
             issues_context = "\n".join(latest_reflection.issues)
             
+            # Determine domain from task content
+            domain = self._infer_domain_from_task(task)
+            
+            # Use domain-specific improvement prompts
+            improvement_prompt = ReflectionPrompts.build_improvement_prompt(
+                domain, task, latest_reflection.issues, latest_reflection.improvements
+            )
+            
             base_prompt += f"\n\nPrevious attempt (iteration {iteration}) failed with issues:\n{issues_context}"
             base_prompt += f"\n\nPlease improve by:\n{improvement_context}"
+            base_prompt += f"\n\nDomain-specific guidance:\n{improvement_prompt}"
         
         return base_prompt
+    
+    def _infer_domain_from_task(self, task: str) -> 'PromptDomain':
+        """Infer the domain from task content."""
+        from ..prompts import PromptDomain
+        
+        task_lower = task.lower()
+        
+        # Software engineering keywords
+        code_keywords = ['code', 'function', 'class', 'implement', 'debug', 'algorithm', 'program', 'script']
+        if any(keyword in task_lower for keyword in code_keywords):
+            return PromptDomain.SOFTWARE_ENGINEERING
+        
+        # Data analysis keywords
+        data_keywords = ['data', 'analyze', 'statistics', 'chart', 'graph', 'dataset', 'analysis']
+        if any(keyword in task_lower for keyword in data_keywords):
+            return PromptDomain.DATA_ANALYSIS
+        
+        # Creative writing keywords
+        creative_keywords = ['write', 'story', 'creative', 'narrative', 'poem', 'article', 'content']
+        if any(keyword in task_lower for keyword in creative_keywords):
+            return PromptDomain.CREATIVE_WRITING
+        
+        # Research keywords
+        research_keywords = ['research', 'investigate', 'study', 'explore', 'examine', 'review']
+        if any(keyword in task_lower for keyword in research_keywords):
+            return PromptDomain.RESEARCH
+        
+        return PromptDomain.GENERAL
 
     def _evaluate_output(self, task: str, output: str, criteria: Optional[str]) -> Dict[str, Any]:
         """Evaluate task output using multiple heuristics."""

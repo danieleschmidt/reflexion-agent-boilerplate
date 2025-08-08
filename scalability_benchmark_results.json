@@ -1,0 +1,810 @@
+{
+  "summary": {
+    "total_tests": 22,
+    "total_tasks_processed": 781,
+    "avg_throughput": 2395.397650174949,
+    "max_throughput": 12904.75663036121,
+    "avg_success_rate": 0.8181818181818182,
+    "performance_categories": {
+      "Basic": {
+        "test_count": 4,
+        "avg_throughput": 1099.9430487939524,
+        "max_throughput": 1243.5526144139658,
+        "avg_success_rate": 1.0,
+        "best_result": {
+          "test_name": "Basic-50tasks",
+          "tasks_completed": 50,
+          "total_time": 0.0402073860168457,
+          "avg_time_per_task": 0.0008041477203369141,
+          "throughput_tps": 1243.5526144139658,
+          "success_rate": 1.0,
+          "cache_hit_rate": null,
+          "memory_usage_mb": null,
+          "cpu_utilization": null,
+          "error_count": 0,
+          "metadata": null
+        }
+      },
+      "Optimized": {
+        "test_count": 4,
+        "avg_throughput": 3268.9713736885597,
+        "max_throughput": 6098.44036252605,
+        "avg_success_rate": 1.0,
+        "best_result": {
+          "test_name": "Optimized-Full-Optimized",
+          "tasks_completed": 30,
+          "total_time": 0.004919290542602539,
+          "avg_time_per_task": 0.00016397635142008463,
+          "throughput_tps": 6098.44036252605,
+          "success_rate": 1.0,
+          "cache_hit_rate": 0.8333333333333334,
+          "memory_usage_mb": null,
+          "cpu_utilization": null,
+          "error_count": 0,
+          "metadata": {
+            "agent_stats": {
+              "tasks_processed": 5,
+              "cache_hits": 25,
+              "cache_misses": 5,
+              "total_processing_time": 0.0045604705810546875,
+              "parallel_executions": 0
+            },
+            "cache_stats": {
+              "size": 5,
+              "max_size": 500,
+              "memory_usage_mb": 0.0017871856689453125,
+              "max_memory_mb": 100.0,
+              "hit_rate": 0.8333333333333334,
+              "hits": 25,
+              "misses": 5,
+              "evictions": 0
+            },
+            "optimization_stats": {
+              "strategies_enabled": [
+                "parallel_execution",
+                "caching",
+                "prefetching",
+                "result_memoization"
+              ],
+              "metrics": {
+                "cache_performance": {
+                  "size": 0,
+                  "max_size": 1000,
+                  "memory_usage_mb": 0.0,
+                  "max_memory_mb": 100.0,
+                  "hit_rate": 0.0,
+                  "hits": 0,
+                  "misses": 0,
+                  "evictions": 0
+                },
+                "parallel_tasks": 0,
+                "time_saved_seconds": 0.0
+              },
+              "parallel_executor": {
+                "max_workers": 4,
+                "use_processes": false
+              }
+            },
+            "derived_metrics": {
+              "avg_processing_time": 0.0009120941162109375,
+              "cache_hit_rate": 0.8333333333333334,
+              "tasks_per_second": 5.0,
+              "parallel_utilization": 0.0
+            },
+            "configuration": {
+              "caching_enabled": true,
+              "parallel_execution_enabled": true,
+              "memoization_enabled": true,
+              "prefetching_enabled": false,
+              "max_concurrent_tasks": 4,
+              "batch_size": 10
+            }
+          }
+        }
+      },
+      "Batch": {
+        "test_count": 4,
+        "avg_throughput": 7008.908649077597,
+        "max_throughput": 12904.75663036121,
+        "avg_success_rate": 1.0,
+        "best_result": {
+          "test_name": "Batch-50",
+          "tasks_completed": 50,
+          "total_time": 0.003874540328979492,
+          "avg_time_per_task": 7.749080657958984e-05,
+          "throughput_tps": 12904.75663036121,
+          "success_rate": 1.0,
+          "cache_hit_rate": null,
+          "memory_usage_mb": null,
+          "cpu_utilization": null,
+          "error_count": 0,
+          "metadata": null
+        }
+      },
+      "AutoScale": {
+        "test_count": 4,
+        "avg_throughput": 17.142485660387166,
+        "max_throughput": 28.781141141457105,
+        "avg_success_rate": 0.0,
+        "best_result": {
+          "test_name": "AutoScale-High-Sustained",
+          "tasks_completed": 60,
+          "total_time": 2.084698438644409,
+          "avg_time_per_task": 0.03474497397740682,
+          "throughput_tps": 28.781141141457105,
+          "success_rate": 0.0,
+          "cache_hit_rate": null,
+          "memory_usage_mb": null,
+          "cpu_utilization": null,
+          "error_count": 0,
+          "metadata": {
+            "current_workers": 1,
+            "min_workers": 1,
+            "max_workers": 16,
+            "load_metrics": {
+              "active_tasks": 0,
+              "queue_size": 0,
+              "avg_response_time": 0.0019185592384802308,
+              "success_rate": 3.5334083494636473e-07
+            },
+            "scale_up_threshold": 0.8,
+            "scale_down_threshold": 0.3
+          }
+        }
+      },
+      "Memory": {
+        "test_count": 2,
+        "avg_throughput": 1055.2399198801982,
+        "max_throughput": 1064.2578392615185,
+        "avg_success_rate": 1.0,
+        "best_result": {
+          "test_name": "Memory-Limited-Memory",
+          "tasks_completed": 50,
+          "total_time": 0.046981096267700195,
+          "avg_time_per_task": 0.0009396219253540039,
+          "throughput_tps": 1064.2578392615185,
+          "success_rate": 1.0,
+          "cache_hit_rate": 0.0,
+          "memory_usage_mb": null,
+          "cpu_utilization": null,
+          "error_count": 0,
+          "metadata": {
+            "size": 50,
+            "max_size": 50,
+            "memory_usage_mb": 0.018672943115234375,
+            "max_memory_mb": 100.0,
+            "hit_rate": 0.0,
+            "hits": 0,
+            "misses": 50,
+            "evictions": 0
+          }
+        }
+      },
+      "Concurrent": {
+        "test_count": 4,
+        "avg_throughput": 1252.1015588016223,
+        "max_throughput": 1942.0321796504224,
+        "avg_success_rate": 1.0,
+        "best_result": {
+          "test_name": "Concurrent-2threads",
+          "tasks_completed": 20,
+          "total_time": 0.010298490524291992,
+          "avg_time_per_task": 0.0005149245262145996,
+          "throughput_tps": 1942.0321796504224,
+          "success_rate": 1.0,
+          "cache_hit_rate": null,
+          "memory_usage_mb": null,
+          "cpu_utilization": null,
+          "error_count": 0,
+          "metadata": {
+            "concurrency_level": 2,
+            "completed_tasks": 20
+          }
+        }
+      }
+    }
+  },
+  "insights": [
+    "Full optimization improved throughput by 557.7%",
+    "System demonstrates high-throughput capabilities (>10 tasks/sec)"
+  ],
+  "detailed_results": [
+    {
+      "test_name": "Basic-10tasks",
+      "tasks_completed": 10,
+      "total_time": 0.013285398483276367,
+      "avg_time_per_task": 0.0013285398483276368,
+      "throughput_tps": 752.706063923335,
+      "success_rate": 1.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": null
+    },
+    {
+      "test_name": "Basic-25tasks",
+      "tasks_completed": 25,
+      "total_time": 0.02107715606689453,
+      "avg_time_per_task": 0.0008430862426757812,
+      "throughput_tps": 1186.1182751911679,
+      "success_rate": 1.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": null
+    },
+    {
+      "test_name": "Basic-50tasks",
+      "tasks_completed": 50,
+      "total_time": 0.0402073860168457,
+      "avg_time_per_task": 0.0008041477203369141,
+      "throughput_tps": 1243.5526144139658,
+      "success_rate": 1.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": null
+    },
+    {
+      "test_name": "Basic-100tasks",
+      "tasks_completed": 100,
+      "total_time": 0.08214259147644043,
+      "avg_time_per_task": 0.0008214259147644043,
+      "throughput_tps": 1217.395241647341,
+      "success_rate": 1.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": null
+    },
+    {
+      "test_name": "Optimized-Baseline",
+      "tasks_completed": 30,
+      "total_time": 0.032354116439819336,
+      "avg_time_per_task": 0.0010784705479939779,
+      "throughput_tps": 927.2390440889295,
+      "success_rate": 1.0,
+      "cache_hit_rate": 0.0,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": {
+        "agent_stats": {
+          "tasks_processed": 30,
+          "cache_hits": 0,
+          "cache_misses": 0,
+          "total_processing_time": 0.03225445747375488,
+          "parallel_executions": 0
+        },
+        "cache_stats": {
+          "size": 0,
+          "max_size": 500,
+          "memory_usage_mb": 0.0,
+          "max_memory_mb": 100.0,
+          "hit_rate": 0.0,
+          "hits": 0,
+          "misses": 0,
+          "evictions": 0
+        },
+        "optimization_stats": {
+          "strategies_enabled": [
+            "parallel_execution",
+            "caching",
+            "prefetching",
+            "result_memoization"
+          ],
+          "metrics": {
+            "cache_performance": {
+              "size": 0,
+              "max_size": 1000,
+              "memory_usage_mb": 0.0,
+              "max_memory_mb": 100.0,
+              "hit_rate": 0.0,
+              "hits": 0,
+              "misses": 0,
+              "evictions": 0
+            },
+            "parallel_tasks": 0,
+            "time_saved_seconds": 0.0
+          },
+          "parallel_executor": {
+            "max_workers": 4,
+            "use_processes": false
+          }
+        },
+        "derived_metrics": {
+          "avg_processing_time": 0.001075148582458496,
+          "cache_hit_rate": 0.0,
+          "tasks_per_second": 30.0,
+          "parallel_utilization": 0.0
+        },
+        "configuration": {
+          "caching_enabled": false,
+          "parallel_execution_enabled": false,
+          "memoization_enabled": true,
+          "prefetching_enabled": false,
+          "max_concurrent_tasks": 4,
+          "batch_size": 10
+        }
+      }
+    },
+    {
+      "test_name": "Optimized-With-Caching",
+      "tasks_completed": 30,
+      "total_time": 0.006088733673095703,
+      "avg_time_per_task": 0.0002029577891031901,
+      "throughput_tps": 4927.132899992169,
+      "success_rate": 1.0,
+      "cache_hit_rate": 0.8333333333333334,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": {
+        "agent_stats": {
+          "tasks_processed": 5,
+          "cache_hits": 25,
+          "cache_misses": 5,
+          "total_processing_time": 0.00557398796081543,
+          "parallel_executions": 0
+        },
+        "cache_stats": {
+          "size": 5,
+          "max_size": 500,
+          "memory_usage_mb": 0.0017871856689453125,
+          "max_memory_mb": 100.0,
+          "hit_rate": 0.8333333333333334,
+          "hits": 25,
+          "misses": 5,
+          "evictions": 0
+        },
+        "optimization_stats": {
+          "strategies_enabled": [
+            "parallel_execution",
+            "caching",
+            "prefetching",
+            "result_memoization"
+          ],
+          "metrics": {
+            "cache_performance": {
+              "size": 0,
+              "max_size": 1000,
+              "memory_usage_mb": 0.0,
+              "max_memory_mb": 100.0,
+              "hit_rate": 0.0,
+              "hits": 0,
+              "misses": 0,
+              "evictions": 0
+            },
+            "parallel_tasks": 0,
+            "time_saved_seconds": 0.0
+          },
+          "parallel_executor": {
+            "max_workers": 4,
+            "use_processes": false
+          }
+        },
+        "derived_metrics": {
+          "avg_processing_time": 0.001114797592163086,
+          "cache_hit_rate": 0.8333333333333334,
+          "tasks_per_second": 5.0,
+          "parallel_utilization": 0.0
+        },
+        "configuration": {
+          "caching_enabled": true,
+          "parallel_execution_enabled": false,
+          "memoization_enabled": true,
+          "prefetching_enabled": false,
+          "max_concurrent_tasks": 4,
+          "batch_size": 10
+        }
+      }
+    },
+    {
+      "test_name": "Optimized-With-Parallel",
+      "tasks_completed": 30,
+      "total_time": 0.026712417602539062,
+      "avg_time_per_task": 0.0008904139200846354,
+      "throughput_tps": 1123.0731881470904,
+      "success_rate": 1.0,
+      "cache_hit_rate": 0.0,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": {
+        "agent_stats": {
+          "tasks_processed": 30,
+          "cache_hits": 0,
+          "cache_misses": 0,
+          "total_processing_time": 0.026627540588378906,
+          "parallel_executions": 0
+        },
+        "cache_stats": {
+          "size": 0,
+          "max_size": 500,
+          "memory_usage_mb": 0.0,
+          "max_memory_mb": 100.0,
+          "hit_rate": 0.0,
+          "hits": 0,
+          "misses": 0,
+          "evictions": 0
+        },
+        "optimization_stats": {
+          "strategies_enabled": [
+            "parallel_execution",
+            "caching",
+            "prefetching",
+            "result_memoization"
+          ],
+          "metrics": {
+            "cache_performance": {
+              "size": 0,
+              "max_size": 1000,
+              "memory_usage_mb": 0.0,
+              "max_memory_mb": 100.0,
+              "hit_rate": 0.0,
+              "hits": 0,
+              "misses": 0,
+              "evictions": 0
+            },
+            "parallel_tasks": 0,
+            "time_saved_seconds": 0.0
+          },
+          "parallel_executor": {
+            "max_workers": 4,
+            "use_processes": false
+          }
+        },
+        "derived_metrics": {
+          "avg_processing_time": 0.0008875846862792969,
+          "cache_hit_rate": 0.0,
+          "tasks_per_second": 30.0,
+          "parallel_utilization": 0.0
+        },
+        "configuration": {
+          "caching_enabled": false,
+          "parallel_execution_enabled": true,
+          "memoization_enabled": true,
+          "prefetching_enabled": false,
+          "max_concurrent_tasks": 4,
+          "batch_size": 10
+        }
+      }
+    },
+    {
+      "test_name": "Optimized-Full-Optimized",
+      "tasks_completed": 30,
+      "total_time": 0.004919290542602539,
+      "avg_time_per_task": 0.00016397635142008463,
+      "throughput_tps": 6098.44036252605,
+      "success_rate": 1.0,
+      "cache_hit_rate": 0.8333333333333334,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": {
+        "agent_stats": {
+          "tasks_processed": 5,
+          "cache_hits": 25,
+          "cache_misses": 5,
+          "total_processing_time": 0.0045604705810546875,
+          "parallel_executions": 0
+        },
+        "cache_stats": {
+          "size": 5,
+          "max_size": 500,
+          "memory_usage_mb": 0.0017871856689453125,
+          "max_memory_mb": 100.0,
+          "hit_rate": 0.8333333333333334,
+          "hits": 25,
+          "misses": 5,
+          "evictions": 0
+        },
+        "optimization_stats": {
+          "strategies_enabled": [
+            "parallel_execution",
+            "caching",
+            "prefetching",
+            "result_memoization"
+          ],
+          "metrics": {
+            "cache_performance": {
+              "size": 0,
+              "max_size": 1000,
+              "memory_usage_mb": 0.0,
+              "max_memory_mb": 100.0,
+              "hit_rate": 0.0,
+              "hits": 0,
+              "misses": 0,
+              "evictions": 0
+            },
+            "parallel_tasks": 0,
+            "time_saved_seconds": 0.0
+          },
+          "parallel_executor": {
+            "max_workers": 4,
+            "use_processes": false
+          }
+        },
+        "derived_metrics": {
+          "avg_processing_time": 0.0009120941162109375,
+          "cache_hit_rate": 0.8333333333333334,
+          "tasks_per_second": 5.0,
+          "parallel_utilization": 0.0
+        },
+        "configuration": {
+          "caching_enabled": true,
+          "parallel_execution_enabled": true,
+          "memoization_enabled": true,
+          "prefetching_enabled": false,
+          "max_concurrent_tasks": 4,
+          "batch_size": 10
+        }
+      }
+    },
+    {
+      "test_name": "Batch-5",
+      "tasks_completed": 5,
+      "total_time": 0.32424449920654297,
+      "avg_time_per_task": 0.0648488998413086,
+      "throughput_tps": 15.420462065618612,
+      "success_rate": 1.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": null
+    },
+    {
+      "test_name": "Batch-10",
+      "tasks_completed": 10,
+      "total_time": 0.0021593570709228516,
+      "avg_time_per_task": 0.00021593570709228517,
+      "throughput_tps": 4631.008060064039,
+      "success_rate": 1.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": null
+    },
+    {
+      "test_name": "Batch-20",
+      "tasks_completed": 20,
+      "total_time": 0.0019075870513916016,
+      "avg_time_per_task": 9.537935256958008e-05,
+      "throughput_tps": 10484.449443819523,
+      "success_rate": 1.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": null
+    },
+    {
+      "test_name": "Batch-50",
+      "tasks_completed": 50,
+      "total_time": 0.003874540328979492,
+      "avg_time_per_task": 7.749080657958984e-05,
+      "throughput_tps": 12904.75663036121,
+      "success_rate": 1.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": null
+    },
+    {
+      "test_name": "AutoScale-Constant-Low",
+      "tasks_completed": 20,
+      "total_time": 2.05104398727417,
+      "avg_time_per_task": 0.10255219936370849,
+      "throughput_tps": 9.751131679325868,
+      "success_rate": 0.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": {
+        "current_workers": 1,
+        "min_workers": 1,
+        "max_workers": 16,
+        "load_metrics": {
+          "active_tasks": 0,
+          "queue_size": 0,
+          "avg_response_time": 0.0017733418608495474,
+          "success_rate": 0.12157665459056936
+        },
+        "scale_up_threshold": 0.8,
+        "scale_down_threshold": 0.3
+      }
+    },
+    {
+      "test_name": "AutoScale-Ramp-Up",
+      "tasks_completed": 32,
+      "total_time": 2.039017677307129,
+      "avg_time_per_task": 0.06371930241584778,
+      "throughput_tps": 15.693831572005529,
+      "success_rate": 0.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": {
+        "current_workers": 1,
+        "min_workers": 1,
+        "max_workers": 16,
+        "load_metrics": {
+          "active_tasks": 0,
+          "queue_size": 0,
+          "avg_response_time": 0.0014534759343528456,
+          "success_rate": 0.0041745579179292966
+        },
+        "scale_up_threshold": 0.8,
+        "scale_down_threshold": 0.3
+      }
+    },
+    {
+      "test_name": "AutoScale-Spike",
+      "tasks_completed": 29,
+      "total_time": 2.0217740535736084,
+      "avg_time_per_task": 0.06971634667495201,
+      "throughput_tps": 14.34383824876016,
+      "success_rate": 0.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": {
+        "current_workers": 1,
+        "min_workers": 1,
+        "max_workers": 16,
+        "load_metrics": {
+          "active_tasks": 0,
+          "queue_size": 0,
+          "avg_response_time": 0.00042431681499724975,
+          "success_rate": 0.00019662705047555326
+        },
+        "scale_up_threshold": 0.8,
+        "scale_down_threshold": 0.3
+      }
+    },
+    {
+      "test_name": "AutoScale-High-Sustained",
+      "tasks_completed": 60,
+      "total_time": 2.084698438644409,
+      "avg_time_per_task": 0.03474497397740682,
+      "throughput_tps": 28.781141141457105,
+      "success_rate": 0.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": {
+        "current_workers": 1,
+        "min_workers": 1,
+        "max_workers": 16,
+        "load_metrics": {
+          "active_tasks": 0,
+          "queue_size": 0,
+          "avg_response_time": 0.0019185592384802308,
+          "success_rate": 3.5334083494636473e-07
+        },
+        "scale_up_threshold": 0.8,
+        "scale_down_threshold": 0.3
+      }
+    },
+    {
+      "test_name": "Memory-No-Limit",
+      "tasks_completed": 50,
+      "total_time": 0.0477910041809082,
+      "avg_time_per_task": 0.0009558200836181641,
+      "throughput_tps": 1046.2220004988776,
+      "success_rate": 1.0,
+      "cache_hit_rate": 0.0,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": {
+        "size": 50,
+        "max_size": 500,
+        "memory_usage_mb": 0.018672943115234375,
+        "max_memory_mb": 100.0,
+        "hit_rate": 0.0,
+        "hits": 0,
+        "misses": 50,
+        "evictions": 0
+      }
+    },
+    {
+      "test_name": "Memory-Limited-Memory",
+      "tasks_completed": 50,
+      "total_time": 0.046981096267700195,
+      "avg_time_per_task": 0.0009396219253540039,
+      "throughput_tps": 1064.2578392615185,
+      "success_rate": 1.0,
+      "cache_hit_rate": 0.0,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": {
+        "size": 50,
+        "max_size": 50,
+        "memory_usage_mb": 0.018672943115234375,
+        "max_memory_mb": 100.0,
+        "hit_rate": 0.0,
+        "hits": 0,
+        "misses": 50,
+        "evictions": 0
+      }
+    },
+    {
+      "test_name": "Concurrent-1threads",
+      "tasks_completed": 10,
+      "total_time": 0.013556480407714844,
+      "avg_time_per_task": 0.0013556480407714844,
+      "throughput_tps": 737.6545902215969,
+      "success_rate": 1.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": {
+        "concurrency_level": 1,
+        "completed_tasks": 10
+      }
+    },
+    {
+      "test_name": "Concurrent-2threads",
+      "tasks_completed": 20,
+      "total_time": 0.010298490524291992,
+      "avg_time_per_task": 0.0005149245262145996,
+      "throughput_tps": 1942.0321796504224,
+      "success_rate": 1.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": {
+        "concurrency_level": 2,
+        "completed_tasks": 20
+      }
+    },
+    {
+      "test_name": "Concurrent-4threads",
+      "tasks_completed": 40,
+      "total_time": 0.0356137752532959,
+      "avg_time_per_task": 0.0008903443813323975,
+      "throughput_tps": 1123.1609037656904,
+      "success_rate": 1.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": {
+        "concurrency_level": 4,
+        "completed_tasks": 40
+      }
+    },
+    {
+      "test_name": "Concurrent-8threads",
+      "tasks_completed": 80,
+      "total_time": 0.06635928153991699,
+      "avg_time_per_task": 0.0008294910192489624,
+      "throughput_tps": 1205.5585615687796,
+      "success_rate": 1.0,
+      "cache_hit_rate": null,
+      "memory_usage_mb": null,
+      "cpu_utilization": null,
+      "error_count": 0,
+      "metadata": {
+        "concurrency_level": 8,
+        "completed_tasks": 80
+      }
+    }
+  ],
+  "timestamp": 1754622800.16445
+}
