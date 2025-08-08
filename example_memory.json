@@ -1,38 +1,54 @@
 [
   {
-    "episode_id": "-8443976870639337421",
-    "task": "Create a simple calculator function",
+    "episode_id": "3224614272809629179",
+    "task": "Write a sorting algorithm",
     "success": true,
     "iterations": 1,
     "reflections": [],
-    "total_time": 6.175041198730469e-05,
-    "timestamp": "2025-08-04T13:31:49.149812",
+    "total_time": 0.0008077621459960938,
+    "timestamp": "2025-08-08T03:11:32.592375",
     "metadata": {
-      "example": "with_memory"
+      "example_run": true,
+      "task_index": 0
     }
   },
   {
-    "episode_id": "4003780673903677285",
-    "task": "Write a function to reverse a string",
+    "episode_id": "-810859789281752438",
+    "task": "Implement a binary search function",
     "success": true,
     "iterations": 1,
     "reflections": [],
-    "total_time": 1.71661376953125e-05,
-    "timestamp": "2025-08-04T13:31:49.150143",
+    "total_time": 0.0009758472442626953,
+    "timestamp": "2025-08-08T03:11:32.593947",
     "metadata": {
-      "example": "with_memory"
+      "example_run": true,
+      "task_index": 1
     }
   },
   {
-    "episode_id": "4780719921013043147",
-    "task": "Implement binary search algorithm",
+    "episode_id": "-3535895190443289321",
+    "task": "Create a data structure for storing key-value pairs",
     "success": true,
     "iterations": 1,
     "reflections": [],
-    "total_time": 2.1457672119140625e-05,
-    "timestamp": "2025-08-04T13:31:49.150598",
+    "total_time": 0.0008764266967773438,
+    "timestamp": "2025-08-08T03:11:32.595313",
     "metadata": {
-      "example": "with_memory"
+      "example_run": true,
+      "task_index": 2
+    }
+  },
+  {
+    "episode_id": "-6085626453560355306",
+    "task": "Write a function to find duplicates in a list",
+    "success": true,
+    "iterations": 1,
+    "reflections": [],
+    "total_time": 0.00087738037109375,
+    "timestamp": "2025-08-08T03:11:32.596946",
+    "metadata": {
+      "example_run": true,
+      "task_index": 3
     }
   }
 ]
