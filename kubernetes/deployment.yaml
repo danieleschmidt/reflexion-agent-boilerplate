@@ -1,0 +1,349 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reflexion-api
+  namespace: reflexion-production
+  labels:
+    app: reflexion-api
+    component: api-server
+    environment: production
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: reflexion-api
+  template:
+    metadata:
+      labels:
+        app: reflexion-api
+        component: api-server
+        environment: production
+    spec:
+      serviceAccountName: reflexion-service-account
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      containers:
+      - name: reflexion-api
+        image: reflexion/reflexion-agent:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: REFLEXION_ENV
+          value: "production"
+        - name: REFLEXION_LOG_LEVEL
+          value: "INFO"
+        - name: REFLEXION_PORT
+          value: "8000"
+        - name: REFLEXION_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: reflexion-secrets
+              key: database-url
+        - name: REFLEXION_REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: reflexion-secrets
+              key: redis-url
+        - name: REFLEXION_SECURITY_ENABLED
+          value: "true"
+        - name: REFLEXION_METRICS_ENABLED
+          value: "true"
+        - name: REFLEXION_AUTO_SCALING
+          value: "true"
+        - name: REFLEXION_MAX_INSTANCES
+          value: "20"
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        volumeMounts:
+        - name: reflexion-config
+          mountPath: /app/config
+          readOnly: true
+        - name: reflexion-data
+          mountPath: /app/data
+        - name: reflexion-cache
+          mountPath: /app/cache
+        - name: reflexion-logs
+          mountPath: /app/logs
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: reflexion-config
+        configMap:
+          name: reflexion-config
+      - name: reflexion-data
+        persistentVolumeClaim:
+          claimName: reflexion-data
+      - name: reflexion-cache
+        persistentVolumeClaim:
+          claimName: reflexion-cache
+      - name: reflexion-logs
+        persistentVolumeClaim:
+          claimName: reflexion-logs
+      nodeSelector:
+        node-type: compute
+      tolerations:
+      - key: "compute-node"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reflexion-worker
+  namespace: reflexion-production
+  labels:
+    app: reflexion-worker
+    component: worker-node
+    environment: production
+spec:
+  replicas: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: reflexion-worker
+  template:
+    metadata:
+      labels:
+        app: reflexion-worker
+        component: worker-node
+        environment: production
+    spec:
+      serviceAccountName: reflexion-service-account
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      containers:
+      - name: reflexion-worker
+        image: reflexion/reflexion-agent:latest
+        imagePullPolicy: Always
+        command: ["python", "scripts/start_worker.py"]
+        env:
+        - name: REFLEXION_ENV
+          value: "production"
+        - name: REFLEXION_MODE
+          value: "worker"
+        - name: REFLEXION_LOG_LEVEL
+          value: "INFO"
+        - name: REFLEXION_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: reflexion-secrets
+              key: database-url
+        - name: REFLEXION_REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: reflexion-secrets
+              key: redis-url
+        - name: WORKER_CONCURRENCY
+          value: "5"
+        - name: WORKER_MEMORY_LIMIT
+          value: "2Gi"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 2Gi
+        livenessProbe:
+          exec:
+            command:
+            - python
+            - scripts/worker_health.py
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - python
+            - scripts/worker_ready.py
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 2
+        volumeMounts:
+        - name: reflexion-config
+          mountPath: /app/config
+          readOnly: true
+        - name: reflexion-cache
+          mountPath: /app/cache
+        - name: reflexion-logs
+          mountPath: /app/logs
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: reflexion-config
+        configMap:
+          name: reflexion-config
+      - name: reflexion-cache
+        persistentVolumeClaim:
+          claimName: reflexion-cache
+      - name: reflexion-logs
+        persistentVolumeClaim:
+          claimName: reflexion-logs
+      nodeSelector:
+        node-type: worker
+      tolerations:
+      - key: "worker-node"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: reflexion-api-hpa
+  namespace: reflexion-production
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: reflexion-api
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Pods
+    pods:
+      metric:
+        name: reflexion_queue_length
+      target:
+        type: AverageValue
+        averageValue: "10"
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+      - type: Pods
+        value: 4
+        periodSeconds: 15
+      selectPolicy: Max
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+      selectPolicy: Min
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: reflexion-worker-hpa
+  namespace: reflexion-production
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: reflexion-worker
+  minReplicas: 5
+  maxReplicas: 50
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 75
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 85
+  - type: Pods
+    pods:
+      metric:
+        name: reflexion_pending_tasks
+      target:
+        type: AverageValue
+        averageValue: "5"
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30
+      policies:
+      - type: Percent
+        value: 200
+        periodSeconds: 15
+      - type: Pods
+        value: 10
+        periodSeconds: 15
+      selectPolicy: Max
+    scaleDown:
+      stabilizationWindowSeconds: 600
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+      - type: Pods
+        value: 5
+        periodSeconds: 60
+      selectPolicy: Min
