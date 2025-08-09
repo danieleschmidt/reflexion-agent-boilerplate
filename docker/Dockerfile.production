@@ -1,0 +1,75 @@
+# Multi-stage production Dockerfile for Reflexion Agent Framework
+FROM python:3.12-slim as builder
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements and install dependencies
+COPY pyproject.toml .
+RUN pip install --no-cache-dir build wheel
+
+# Copy source code
+COPY src/ src/
+COPY README.md .
+COPY LICENSE .
+
+# Build the package
+RUN python -m build --wheel
+
+# Production stage
+FROM python:3.12-slim as production
+
+# Create non-root user
+RUN groupadd -r reflexion && useradd -r -g reflexion reflexion
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Set working directory
+WORKDIR /app
+
+# Copy wheel from builder stage
+COPY --from=builder /app/dist/*.whl ./
+
+# Install the package
+RUN pip install --no-cache-dir *.whl[all] && rm *.whl
+
+# Copy production configuration
+COPY docker/config/ config/
+COPY docker/scripts/ scripts/
+
+# Create necessary directories
+RUN mkdir -p /app/logs /app/data /app/cache /app/tmp \
+    && chown -R reflexion:reflexion /app
+
+# Set up health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python scripts/healthcheck.py
+
+# Switch to non-root user
+USER reflexion
+
+# Expose port
+EXPOSE 8000
+
+# Set environment variables
+ENV PYTHONPATH=/app \
+    PYTHONUNBUFFERED=1 \
+    REFLEXION_ENV=production \
+    REFLEXION_LOG_LEVEL=INFO \
+    REFLEXION_DATA_DIR=/app/data \
+    REFLEXION_CACHE_DIR=/app/cache \
+    REFLEXION_LOG_DIR=/app/logs
+
+# Start command
+CMD ["python", "scripts/start_production.py"]
