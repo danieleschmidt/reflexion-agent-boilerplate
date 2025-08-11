@@ -98,3 +98,12 @@ class ResourceExhaustedError(RetryableError):
     def __init__(self, message: str, resource_type: str, **kwargs):
         super().__init__(message, **kwargs)
         self.resource_type = resource_type
+
+
+class ComplianceError(ReflexionError):
+    """Raised when compliance violations are detected."""
+    
+    def __init__(self, message: str, compliance_type: str, violation_details: Optional[Dict] = None):
+        super().__init__(message, violation_details)
+        self.compliance_type = compliance_type
+        self.violation_details = violation_details or {}
