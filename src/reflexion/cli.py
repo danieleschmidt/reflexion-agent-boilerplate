@@ -1,12 +1,17 @@
-"""Command line interface for reflexion agent."""
+"""Enhanced command line interface for reflexion agent with research capabilities."""
 
 import argparse
+import asyncio
 import json
 import sys
+import time
+import traceback
 from pathlib import Path
+from typing import List, Dict, Any
 
 from .core.agent import ReflexionAgent, ReflectionType
 from .memory.episodic import EpisodicMemory
+from .core.logging_config import logger
 
 
 def main():
@@ -50,39 +55,36 @@ Examples:
     
     args = parser.parse_args()
     
-    # Initialize memory system
-    memory = EpisodicMemory(storage_path=args.memory_path)
-    
-    # Handle memory-related commands
-    if args.memory_stats:
-        show_memory_stats(memory)
-        return
-    
-    if args.recall_similar:
-        recall_similar_episodes(memory, args.recall_similar)
-        return
-    
-    # Require task for execution
-    if not args.task:
-        parser.error("Task is required for execution. Use --help for usage information.")
-    
-    # Execute task with reflexion
-    agent = ReflexionAgent(
-        llm=args.llm,
-        max_iterations=args.max_iterations,
-        reflection_type=ReflectionType(args.reflection_type),
-        success_threshold=args.success_threshold
-    )
-    
     try:
-        result = agent.run(args.task, success_criteria=args.success_criteria)
+        # Initialize memory system with error handling
+        try:
+            memory = EpisodicMemory(storage_path=args.memory_path)
+        except Exception as e:
+            logger.error(f"Failed to initialize memory system: {e}")
+            print(f"Warning: Memory system unavailable ({e}). Continuing without persistence.")
+            memory = None
         
-        # Store result in memory
-        memory.store_episode(args.task, result, metadata={
-            "llm": args.llm,
-            "reflection_type": args.reflection_type,
-            "threshold": args.success_threshold
-        })
+        # Handle memory-related commands
+        if args.memory_stats:
+            if memory:
+                show_memory_stats(memory)
+            else:
+                print("Memory system unavailable.")
+            return
+        
+        if args.recall_similar:
+            if memory:
+                recall_similar_episodes(memory, args.recall_similar)
+            else:
+                print("Memory system unavailable.")
+            return
+        
+        # Require task for execution
+        if not args.task:
+            parser.error("Task is required for execution. Use --help for usage information.")
+        
+        # Execute task with reflexion and robust error handling
+        result = execute_task_with_reflexion(args, memory)
         
         # Output results
         if args.json_output:
@@ -94,8 +96,56 @@ Examples:
         print("\\nExecution interrupted by user.")
         sys.exit(1)
     except Exception as e:
-        print(f"Error executing task: {e}")
+        logger.error(f"CLI execution failed: {e}")
+        if args.verbose:
+            print(f"\\nDetailed error traceback:")
+            traceback.print_exc()
+        print(f"Error: {e}")
         sys.exit(1)
+
+
+def execute_task_with_reflexion(args, memory) -> Any:
+    """Execute task with reflexion and robust error handling."""
+    try:
+        # Create agent with enhanced configuration
+        agent_config = {
+            "llm": args.llm,
+            "max_iterations": args.max_iterations,
+            "reflection_type": ReflectionType(args.reflection_type),
+            "success_threshold": args.success_threshold
+        }
+            
+        agent = ReflexionAgent(**agent_config)
+        
+        # Execute with timeout protection
+        start_time = time.time()
+        
+        try:
+            result = agent.run(args.task, success_criteria=args.success_criteria)
+                
+        except Exception as execution_error:
+            execution_time = time.time() - start_time
+            logger.warning(f"Task execution failed after {execution_time:.2f}s: {execution_error}")
+            raise Exception(f"Task execution failed: {execution_error}")
+            
+        # Store result in memory if available
+        if memory:
+            try:
+                memory.store_episode(args.task, result, metadata={
+                    "llm": args.llm,
+                    "reflection_type": args.reflection_type,
+                    "threshold": args.success_threshold,
+                    "cli_execution": True,
+                    "execution_time": time.time() - start_time
+                })
+            except Exception as e:
+                logger.warning(f"Failed to store episode in memory: {e}")
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Task execution failed: {e}")
+        raise
 
 
 def show_memory_stats(memory: EpisodicMemory):
