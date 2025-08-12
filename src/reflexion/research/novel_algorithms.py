@@ -1414,5 +1414,729 @@ class ResearchComparator:
         return insights
 
 
+class MetaCognitiveReflexionAlgorithm:
+    """Meta-cognitive reflexion that reflects on its own reflection process."""
+    
+    def __init__(self, meta_levels: int = 3, metacognitive_threshold: float = 0.6):
+        self.meta_levels = meta_levels
+        self.metacognitive_threshold = metacognitive_threshold
+        self.metacognitive_history = []
+        self.logger = logging.getLogger(__name__)
+        self.reflection_quality_tracker = deque(maxlen=100)
+        self.meta_learning_rate = 0.1
+    
+    async def execute(self, state: ReflexionState, llm_provider) -> Tuple[bool, ReflexionState]:
+        """Execute meta-cognitive reflexion with self-awareness."""
+        
+        try:
+            # Level 1: Standard reflection
+            primary_reflection = await self._generate_primary_reflection(state, llm_provider)
+            
+            # Level 2: Meta-reflection (reflect on reflection quality)
+            meta_reflection = await self._generate_meta_reflection(
+                state, primary_reflection, llm_provider
+            )
+            
+            # Level 3: Meta-meta-reflection (reflect on meta-cognition)
+            meta_meta_reflection = await self._generate_meta_meta_reflection(
+                state, primary_reflection, meta_reflection, llm_provider
+            )
+            
+            # Adaptive meta-learning
+            adapted_strategy = self._adapt_metacognitive_strategy(
+                primary_reflection, meta_reflection, meta_meta_reflection
+            )
+            
+            # Apply integrated improvements
+            improved_state = await self._apply_metacognitive_improvements(
+                state, adapted_strategy, llm_provider
+            )
+            
+            # Track reflection quality for continuous learning
+            quality_score = self._assess_reflection_quality(improved_state)
+            self.reflection_quality_tracker.append(quality_score)
+            
+            # Evaluate success with meta-cognitive criteria
+            success = self._evaluate_metacognitive_success(improved_state, quality_score)
+            
+            return success, improved_state
+            
+        except Exception as e:
+            self.logger.error(f"Meta-cognitive reflexion failed: {str(e)}")
+            # Fallback to simpler reflection
+            return await self._fallback_reflection(state, llm_provider)
+    
+    async def _generate_primary_reflection(self, state: ReflexionState, llm_provider) -> Dict[str, Any]:
+        """Generate primary reflection on task performance."""
+        
+        primary_prompt = f"""
+        Analyze the current task performance and identify improvement opportunities:
+        
+        Task: {state.task}
+        Current Output: {state.current_output}
+        Iteration: {state.iteration}
+        Historical Performance: {state.success_scores[-3:] if state.success_scores else []}
+        
+        Provide a thorough reflection covering:
+        1. Accuracy and correctness assessment
+        2. Completeness and thoroughness
+        3. Efficiency and optimization opportunities
+        4. Quality and clarity improvements
+        5. Innovation and creativity potential
+        
+        Return analysis in JSON format with confidence scores.
+        """
+        
+        try:
+            response = await llm_provider.generate_async(primary_prompt)
+            reflection_data = json.loads(response)
+            reflection_data["reflection_level"] = "primary"
+            reflection_data["generated_at"] = datetime.now().isoformat()
+            return reflection_data
+        except (json.JSONDecodeError, Exception) as e:
+            self.logger.warning(f"Primary reflection parsing failed: {e}")
+            return {
+                "reflection_level": "primary",
+                "accuracy": "needs_improvement",
+                "completeness": "partial",
+                "improvements": ["enhance_accuracy", "improve_completeness"],
+                "confidence": 0.5,
+                "generated_at": datetime.now().isoformat()
+            }
+    
+    async def _generate_meta_reflection(self, state: ReflexionState, 
+                                      primary_reflection: Dict[str, Any], llm_provider) -> Dict[str, Any]:
+        """Generate meta-reflection on the quality of primary reflection."""
+        
+        meta_prompt = f"""
+        Evaluate the quality and effectiveness of the primary reflection:
+        
+        Primary Reflection: {primary_reflection}
+        Task Context: {state.task}
+        Reflection History: {[r.improvements for r in state.reflections[-2:]] if state.reflections else []}
+        
+        Meta-cognitive analysis:
+        1. Is the primary reflection comprehensive and insightful?
+        2. Are the identified improvements actionable and specific?
+        3. Does the reflection demonstrate deep understanding?
+        4. Are there blind spots or missed opportunities?
+        5. How can the reflection process itself be improved?
+        
+        Assess reflection quality and suggest meta-improvements in JSON format.
+        """
+        
+        try:
+            response = await llm_provider.generate_async(meta_prompt)
+            meta_data = json.loads(response)
+            meta_data["reflection_level"] = "meta"
+            meta_data["primary_reflection_quality"] = self._assess_primary_quality(primary_reflection)
+            meta_data["generated_at"] = datetime.now().isoformat()
+            return meta_data
+        except (json.JSONDecodeError, Exception) as e:
+            self.logger.warning(f"Meta-reflection parsing failed: {e}")
+            return {
+                "reflection_level": "meta",
+                "primary_quality": "moderate",
+                "comprehensiveness": "partial",
+                "meta_improvements": ["deeper_analysis", "more_specific_actions"],
+                "confidence": 0.6,
+                "generated_at": datetime.now().isoformat()
+            }
+    
+    async def _generate_meta_meta_reflection(self, state: ReflexionState,
+                                           primary_reflection: Dict[str, Any],
+                                           meta_reflection: Dict[str, Any], 
+                                           llm_provider) -> Dict[str, Any]:
+        """Generate meta-meta-reflection on the meta-cognitive process."""
+        
+        meta_meta_prompt = f"""
+        Evaluate the meta-cognitive reflection process itself:
+        
+        Primary Reflection Quality: {primary_reflection.get('confidence', 0.5)}
+        Meta-Reflection Insights: {meta_reflection}
+        Historical Meta-Learning: {self.metacognitive_history[-3:] if self.metacognitive_history else []}
+        
+        Meta-meta-cognitive analysis:
+        1. Is the meta-reflection adding genuine value?
+        2. Are we getting diminishing returns from meta-cognition?
+        3. How can we optimize the balance between depth and efficiency?
+        4. What patterns emerge in our meta-cognitive processes?
+        5. How should we adapt our reflection strategy?
+        
+        Provide strategic meta-cognitive insights in JSON format.
+        """
+        
+        try:
+            response = await llm_provider.generate_async(meta_meta_prompt)
+            meta_meta_data = json.loads(response)
+            meta_meta_data["reflection_level"] = "meta_meta"
+            meta_meta_data["strategic_value"] = self._calculate_strategic_value(
+                primary_reflection, meta_reflection
+            )
+            meta_meta_data["generated_at"] = datetime.now().isoformat()
+            return meta_meta_data
+        except (json.JSONDecodeError, Exception) as e:
+            self.logger.warning(f"Meta-meta-reflection parsing failed: {e}")
+            return {
+                "reflection_level": "meta_meta",
+                "strategic_value": "moderate",
+                "optimization_opportunities": ["balance_depth_efficiency"],
+                "adaptation_strategy": "gradual_improvement",
+                "confidence": 0.7,
+                "generated_at": datetime.now().isoformat()
+            }
+    
+    def _assess_primary_quality(self, primary_reflection: Dict[str, Any]) -> float:
+        """Assess the quality of primary reflection."""
+        quality_factors = [
+            len(primary_reflection.get('improvements', [])) > 2,  # Has multiple improvements
+            primary_reflection.get('confidence', 0) > 0.6,        # High confidence
+            'accuracy' in primary_reflection,                      # Covers key aspects
+            'completeness' in primary_reflection,
+            len(str(primary_reflection)) > 200                     # Substantial content
+        ]
+        return sum(quality_factors) / len(quality_factors)
+    
+    def _calculate_strategic_value(self, primary: Dict[str, Any], meta: Dict[str, Any]) -> float:
+        """Calculate strategic value of meta-cognitive process."""
+        primary_quality = self._assess_primary_quality(primary)
+        meta_insights = len(meta.get('meta_improvements', []))
+        meta_confidence = meta.get('confidence', 0.5)
+        
+        # Strategic value increases with meta-insights but decreases with excessive complexity
+        base_value = (primary_quality + meta_confidence) / 2
+        insight_bonus = min(0.3, meta_insights * 0.1)
+        complexity_penalty = max(0, (meta_insights - 5) * 0.05)  # Penalty for over-complexity
+        
+        return max(0, min(1, base_value + insight_bonus - complexity_penalty))
+    
+    def _adapt_metacognitive_strategy(self, primary: Dict[str, Any], 
+                                    meta: Dict[str, Any], 
+                                    meta_meta: Dict[str, Any]) -> Dict[str, Any]:
+        """Adapt meta-cognitive strategy based on multi-level analysis."""
+        
+        # Calculate adaptation parameters
+        recent_quality = np.mean(list(self.reflection_quality_tracker)[-10:]) if self.reflection_quality_tracker else 0.5
+        strategic_value = meta_meta.get('strategic_value', 0.5)
+        
+        # Adaptive learning
+        if recent_quality > 0.8:  # High performance - maintain current approach
+            adaptation_intensity = 0.1
+        elif recent_quality < 0.4:  # Low performance - significant adaptation
+            adaptation_intensity = 0.5
+        else:  # Moderate performance - gradual adaptation
+            adaptation_intensity = 0.3
+        
+        # Synthesize improvements from all levels
+        primary_improvements = primary.get('improvements', [])
+        meta_improvements = meta.get('meta_improvements', [])
+        strategic_adaptations = meta_meta.get('optimization_opportunities', [])
+        
+        adapted_strategy = {
+            "adaptation_intensity": adaptation_intensity,
+            "primary_improvements": primary_improvements,
+            "meta_improvements": meta_improvements,
+            "strategic_adaptations": strategic_adaptations,
+            "integrated_approach": self._integrate_multi_level_insights(
+                primary_improvements, meta_improvements, strategic_adaptations
+            ),
+            "confidence": (primary.get('confidence', 0.5) + 
+                          meta.get('confidence', 0.5) + 
+                          meta_meta.get('confidence', 0.5)) / 3,
+            "meta_learning_applied": True
+        }
+        
+        # Store for future meta-learning
+        self.metacognitive_history.append({
+            "strategy": adapted_strategy,
+            "quality_score": recent_quality,
+            "timestamp": datetime.now().isoformat()
+        })
+        
+        return adapted_strategy
+    
+    def _integrate_multi_level_insights(self, primary: List[str], 
+                                      meta: List[str], 
+                                      strategic: List[str]) -> List[str]:
+        """Integrate insights from all reflection levels."""
+        integrated = []
+        
+        # Prioritize based on level and specificity
+        for improvement in primary[:3]:  # Top 3 primary improvements
+            integrated.append(f"primary_{improvement}")
+        
+        for improvement in meta[:2]:  # Top 2 meta improvements
+            integrated.append(f"meta_{improvement}")
+        
+        for improvement in strategic[:1]:  # Top 1 strategic adaptation
+            integrated.append(f"strategic_{improvement}")
+        
+        # Remove duplicates while preserving order
+        seen = set()
+        unique_integrated = []
+        for item in integrated:
+            if item not in seen:
+                seen.add(item)
+                unique_integrated.append(item)
+        
+        return unique_integrated
+    
+    async def _apply_metacognitive_improvements(self, state: ReflexionState, 
+                                              strategy: Dict[str, Any], 
+                                              llm_provider) -> ReflexionState:
+        """Apply integrated meta-cognitive improvements."""
+        
+        improvement_prompt = f"""
+        Apply the following meta-cognitively informed improvements:
+        
+        Current Output: {state.current_output}
+        Integrated Improvements: {strategy['integrated_approach']}
+        Adaptation Intensity: {strategy['adaptation_intensity']}
+        Meta-Cognitive Confidence: {strategy['confidence']}
+        
+        Guidelines:
+        1. Apply primary improvements for direct enhancement
+        2. Apply meta improvements for process optimization
+        3. Apply strategic adaptations for long-term effectiveness
+        4. Maintain coherence across all levels of improvement
+        5. Balance depth with practical utility
+        
+        Provide the meta-cognitively enhanced output.
+        """
+        
+        try:
+            improved_output = await llm_provider.generate_async(improvement_prompt)
+            
+            # Update state with meta-cognitive information
+            new_state = ReflexionState(
+                iteration=state.iteration + 1,
+                task=state.task,
+                current_output=improved_output,
+                historical_outputs=state.historical_outputs + [state.current_output],
+                success_scores=state.success_scores,
+                reflections=state.reflections,
+                meta_reflections=state.meta_reflections + [strategy],
+                strategy_history=state.strategy_history + ["metacognitive"]
+            )
+            
+            return new_state
+            
+        except Exception as e:
+            self.logger.error(f"Failed to apply meta-cognitive improvements: {e}")
+            # Return original state if application fails
+            return state
+    
+    def _assess_reflection_quality(self, state: ReflexionState) -> float:
+        """Assess overall reflection quality for continuous learning."""
+        quality_factors = []
+        
+        # Output improvement
+        if len(state.historical_outputs) > 0:
+            improvement_ratio = len(state.current_output) / max(len(state.historical_outputs[-1]), 1)
+            quality_factors.append(min(1.0, improvement_ratio))
+        
+        # Meta-reflection depth
+        if state.meta_reflections:
+            latest_meta = state.meta_reflections[-1]
+            depth_score = len(latest_meta.get('integrated_approach', [])) / 6.0  # Max 6 improvements
+            quality_factors.append(min(1.0, depth_score))
+        
+        # Confidence progression
+        if len(state.meta_reflections) > 1:
+            confidence_trend = (
+                state.meta_reflections[-1].get('confidence', 0.5) - 
+                state.meta_reflections[-2].get('confidence', 0.5)
+            )
+            quality_factors.append(0.5 + min(0.5, max(-0.5, confidence_trend)))
+        
+        return np.mean(quality_factors) if quality_factors else 0.5
+    
+    def _evaluate_metacognitive_success(self, state: ReflexionState, quality_score: float) -> bool:
+        """Evaluate success using meta-cognitive criteria."""
+        success_criteria = 0
+        total_criteria = 4
+        
+        # Quality threshold
+        if quality_score >= self.metacognitive_threshold:
+            success_criteria += 1
+        
+        # Multi-level improvement
+        if state.meta_reflections and len(state.meta_reflections[-1].get('integrated_approach', [])) >= 3:
+            success_criteria += 1
+        
+        # Learning trajectory
+        if len(self.reflection_quality_tracker) >= 3:
+            recent_avg = np.mean(list(self.reflection_quality_tracker)[-3:])
+            if recent_avg > 0.6:
+                success_criteria += 1
+        
+        # Output substantiality
+        if len(state.current_output) > 200:  # Substantial output
+            success_criteria += 1
+        
+        return success_criteria >= 3  # 3/4 criteria must be met
+    
+    async def _fallback_reflection(self, state: ReflexionState, llm_provider) -> Tuple[bool, ReflexionState]:
+        """Fallback to simpler reflection if meta-cognitive process fails."""
+        try:
+            simple_prompt = f"""
+            Provide a simple reflection on the current output:
+            Task: {state.task}
+            Output: {state.current_output}
+            
+            What improvements can be made?
+            """
+            
+            improved_output = await llm_provider.generate_async(simple_prompt)
+            
+            fallback_state = ReflexionState(
+                iteration=state.iteration + 1,
+                task=state.task,
+                current_output=improved_output,
+                historical_outputs=state.historical_outputs + [state.current_output],
+                success_scores=state.success_scores,
+                reflections=state.reflections,
+                meta_reflections=state.meta_reflections + [{
+                    "fallback": True,
+                    "reason": "metacognitive_failure",
+                    "confidence": 0.4
+                }]
+            )
+            
+            return False, fallback_state  # Conservative success assessment
+            
+        except Exception as e:
+            self.logger.error(f"Even fallback reflection failed: {e}")
+            return False, state  # Return original state
+
+
+class ContrastiveReflexionAlgorithm:
+    """Contrastive reflexion using positive and negative examples."""
+    
+    def __init__(self, contrast_ratio: float = 0.3, example_pool_size: int = 50):
+        self.contrast_ratio = contrast_ratio
+        self.example_pool_size = example_pool_size
+        self.positive_examples = deque(maxlen=example_pool_size)
+        self.negative_examples = deque(maxlen=example_pool_size)
+        self.logger = logging.getLogger(__name__)
+    
+    async def execute(self, state: ReflexionState, llm_provider) -> Tuple[bool, ReflexionState]:
+        """Execute contrastive reflexion algorithm."""
+        
+        try:
+            # Generate contrastive examples
+            positive_examples = await self._generate_positive_examples(state, llm_provider)
+            negative_examples = await self._generate_negative_examples(state, llm_provider)
+            
+            # Contrastive analysis
+            contrastive_insights = await self._perform_contrastive_analysis(
+                state, positive_examples, negative_examples, llm_provider
+            )
+            
+            # Apply contrastive improvements
+            improved_state = await self._apply_contrastive_improvements(
+                state, contrastive_insights, llm_provider
+            )
+            
+            # Update example pools for future use
+            self._update_example_pools(improved_state)
+            
+            # Evaluate contrastive success
+            success = self._evaluate_contrastive_success(improved_state, contrastive_insights)
+            
+            return success, improved_state
+            
+        except Exception as e:
+            self.logger.error(f"Contrastive reflexion failed: {str(e)}")
+            return False, state
+    
+    async def _generate_positive_examples(self, state: ReflexionState, llm_provider) -> List[Dict[str, Any]]:
+        """Generate positive examples of good task execution."""
+        
+        positive_prompt = f"""
+        Generate examples of excellent task execution for this type of task:
+        
+        Task Type: {self._classify_task(state.task)}
+        Current Task: {state.task}
+        
+        Provide 3 examples of high-quality outputs that demonstrate:
+        1. Clarity and precision
+        2. Completeness and thoroughness
+        3. Innovation and creativity
+        
+        Format as JSON array with examples and quality explanations.
+        """
+        
+        try:
+            response = await llm_provider.generate_async(positive_prompt)
+            examples = json.loads(response)
+            
+            # Ensure proper format
+            if not isinstance(examples, list):
+                examples = [examples]
+            
+            return examples[:3]  # Limit to 3 examples
+            
+        except (json.JSONDecodeError, Exception) as e:
+            self.logger.warning(f"Positive example generation failed: {e}")
+            return [{
+                "example": "High-quality comprehensive solution with clear explanation",
+                "quality_factors": ["clarity", "completeness", "accuracy"],
+                "score": 0.9
+            }]
+    
+    async def _generate_negative_examples(self, state: ReflexionState, llm_provider) -> List[Dict[str, Any]]:
+        """Generate negative examples of poor task execution."""
+        
+        negative_prompt = f"""
+        Generate examples of poor task execution to learn what to avoid:
+        
+        Task Type: {self._classify_task(state.task)}
+        Current Task: {state.task}
+        
+        Provide 3 examples of low-quality outputs that demonstrate common failures:
+        1. Lack of clarity or precision
+        2. Incompleteness or superficiality
+        3. Errors or misconceptions
+        
+        Format as JSON array with examples and failure explanations.
+        """
+        
+        try:
+            response = await llm_provider.generate_async(negative_prompt)
+            examples = json.loads(response)
+            
+            # Ensure proper format
+            if not isinstance(examples, list):
+                examples = [examples]
+            
+            return examples[:3]  # Limit to 3 examples
+            
+        except (json.JSONDecodeError, Exception) as e:
+            self.logger.warning(f"Negative example generation failed: {e}")
+            return [{
+                "example": "Incomplete solution with unclear explanation",
+                "failure_factors": ["vagueness", "incompleteness", "errors"],
+                "score": 0.3
+            }]
+    
+    async def _perform_contrastive_analysis(self, state: ReflexionState,
+                                          positive_examples: List[Dict],
+                                          negative_examples: List[Dict],
+                                          llm_provider) -> Dict[str, Any]:
+        """Perform contrastive analysis between positive and negative examples."""
+        
+        contrastive_prompt = f"""
+        Analyze the current output by contrasting it with positive and negative examples:
+        
+        Current Output: {state.current_output}
+        
+        Positive Examples (what to emulate):
+        {json.dumps(positive_examples, indent=2)}
+        
+        Negative Examples (what to avoid):
+        {json.dumps(negative_examples, indent=2)}
+        
+        Contrastive Analysis:
+        1. How does the current output compare to positive examples?
+        2. What positive qualities should be enhanced?
+        3. How does the current output compare to negative examples?
+        4. What negative patterns should be avoided or corrected?
+        5. What specific improvements would move from negative toward positive?
+        
+        Provide detailed contrastive insights in JSON format.
+        """
+        
+        try:
+            response = await llm_provider.generate_async(contrastive_prompt)
+            insights = json.loads(response)
+            
+            # Add computational analysis
+            insights["similarity_to_positive"] = self._calculate_similarity(
+                state.current_output, positive_examples
+            )
+            insights["similarity_to_negative"] = self._calculate_similarity(
+                state.current_output, negative_examples
+            )
+            insights["contrastive_score"] = (
+                insights["similarity_to_positive"] - insights["similarity_to_negative"]
+            )
+            
+            return insights
+            
+        except (json.JSONDecodeError, Exception) as e:
+            self.logger.warning(f"Contrastive analysis failed: {e}")
+            return {
+                "positive_alignment": "moderate",
+                "negative_avoidance": "partial",
+                "improvements": ["enhance_positive_qualities", "avoid_negative_patterns"],
+                "contrastive_score": 0.0
+            }
+    
+    def _calculate_similarity(self, output: str, examples: List[Dict]) -> float:
+        """Calculate similarity between output and example set."""
+        if not examples:
+            return 0.0
+        
+        # Simple word-based similarity (could be enhanced with embeddings)
+        output_words = set(output.lower().split())
+        
+        similarities = []
+        for example in examples:
+            example_text = str(example.get('example', ''))
+            example_words = set(example_text.lower().split())
+            
+            if not example_words:
+                continue
+            
+            # Jaccard similarity
+            intersection = len(output_words & example_words)
+            union = len(output_words | example_words)
+            similarity = intersection / union if union > 0 else 0.0
+            similarities.append(similarity)
+        
+        return np.mean(similarities) if similarities else 0.0
+    
+    async def _apply_contrastive_improvements(self, state: ReflexionState,
+                                            insights: Dict[str, Any],
+                                            llm_provider) -> ReflexionState:
+        """Apply improvements based on contrastive analysis."""
+        
+        improvement_prompt = f"""
+        Improve the current output using contrastive insights:
+        
+        Current Output: {state.current_output}
+        Contrastive Insights: {insights}
+        Positive Alignment Score: {insights.get('similarity_to_positive', 0):.3f}
+        Negative Avoidance Score: {insights.get('similarity_to_negative', 0):.3f}
+        
+        Apply these contrastive improvements:
+        1. Enhance qualities that align with positive examples
+        2. Eliminate or minimize patterns similar to negative examples
+        3. Increase overall contrastive score (positive - negative similarity)
+        4. Maintain natural flow and coherence
+        
+        Provide the contrastively improved output.
+        """
+        
+        try:
+            improved_output = await llm_provider.generate_async(improvement_prompt)
+            
+            # Update state with contrastive information
+            new_state = ReflexionState(
+                iteration=state.iteration + 1,
+                task=state.task,
+                current_output=improved_output,
+                historical_outputs=state.historical_outputs + [state.current_output],
+                success_scores=state.success_scores,
+                reflections=state.reflections,
+                meta_reflections=state.meta_reflections + [{
+                    "algorithm": "contrastive_reflexion",
+                    "contrastive_insights": insights,
+                    "improvement_applied": True
+                }]
+            )
+            
+            return new_state
+            
+        except Exception as e:
+            self.logger.error(f"Failed to apply contrastive improvements: {e}")
+            return state
+    
+    def _update_example_pools(self, state: ReflexionState):
+        """Update positive and negative example pools based on results."""
+        
+        # Assess current output quality
+        output_quality = self._assess_output_quality(state)
+        
+        example_entry = {
+            "output": state.current_output,
+            "task": state.task,
+            "quality_score": output_quality,
+            "timestamp": datetime.now().isoformat()
+        }
+        
+        # Add to appropriate pool based on quality
+        if output_quality > 0.7:
+            self.positive_examples.append(example_entry)
+        elif output_quality < 0.4:
+            self.negative_examples.append(example_entry)
+    
+    def _assess_output_quality(self, state: ReflexionState) -> float:
+        """Assess the quality of current output."""
+        quality_indicators = [
+            len(state.current_output) > 100,  # Substantial content
+            "solution" in state.current_output.lower(),  # Contains solution language
+            not state.current_output.lower().startswith("error"),  # Not an error
+            len(state.current_output.split()) > 20,  # Sufficient detail
+        ]
+        
+        base_score = sum(quality_indicators) / len(quality_indicators)
+        
+        # Bonus for improvement over iterations
+        if len(state.historical_outputs) > 0:
+            improvement_bonus = min(0.2, 
+                (len(state.current_output) - len(state.historical_outputs[-1])) / 
+                max(len(state.historical_outputs[-1]), 1)
+            )
+            base_score += improvement_bonus
+        
+        return min(1.0, max(0.0, base_score))
+    
+    def _classify_task(self, task: str) -> str:
+        """Classify task type for better example generation."""
+        task_lower = task.lower()
+        
+        if any(word in task_lower for word in ['code', 'program', 'implement', 'debug']):
+            return 'programming'
+        elif any(word in task_lower for word in ['analyze', 'data', 'research', 'study']):
+            return 'analysis'
+        elif any(word in task_lower for word in ['write', 'create', 'compose', 'generate']):
+            return 'creative'
+        elif any(word in task_lower for word in ['solve', 'calculate', 'compute', 'math']):
+            return 'mathematical'
+        else:
+            return 'general'
+    
+    def _evaluate_contrastive_success(self, state: ReflexionState, insights: Dict[str, Any]) -> bool:
+        """Evaluate success using contrastive criteria."""
+        
+        success_criteria = 0
+        total_criteria = 3
+        
+        # Positive alignment improvement
+        positive_similarity = insights.get('similarity_to_positive', 0)
+        if positive_similarity > 0.5:
+            success_criteria += 1
+        
+        # Negative pattern avoidance
+        negative_similarity = insights.get('similarity_to_negative', 0)
+        if negative_similarity < 0.3:
+            success_criteria += 1
+        
+        # Overall contrastive score
+        contrastive_score = insights.get('contrastive_score', 0)
+        if contrastive_score > 0.2:  # Positive bias toward good examples
+            success_criteria += 1
+        
+        return success_criteria >= 2
+
+
+# Enhanced ResearchComparator with new algorithms
+class ResearchComparator:
+    """Comprehensive comparison framework for reflexion algorithms."""
+    
+    def __init__(self):
+        self.algorithms = {
+            ReflexionAlgorithm.HIERARCHICAL_REFLEXION: HierarchicalReflexionAlgorithm(),
+            ReflexionAlgorithm.ENSEMBLE_REFLEXION: EnsembleReflexionAlgorithm(),
+            ReflexionAlgorithm.QUANTUM_INSPIRED_REFLEXION: QuantumInspiredReflexionAlgorithm(),
+            ReflexionAlgorithm.META_COGNITIVE_REFLEXION: MetaCognitiveReflexionAlgorithm(),
+            ReflexionAlgorithm.CONTRASTIVE_REFLEXION: ContrastiveReflexionAlgorithm()
+        }
+        self.performance_data: Dict[ReflexionAlgorithm, List[AlgorithmPerformance]] = defaultdict(list)
+        self.logger = logging.getLogger(__name__)
+
+
 # Global research comparator instance
 research_comparator = ResearchComparator()
