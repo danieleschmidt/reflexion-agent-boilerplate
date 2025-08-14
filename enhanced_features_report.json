@@ -1,0 +1,58 @@
+{
+  "metrics": {
+    "counters": {
+      "task_total": 6.0,
+      "task_success": 4.0,
+      "task_errors": 2.0,
+      "error_validation_error": 2.0
+    },
+    "gauges": {},
+    "histograms": {},
+    "timers": {
+      "task_execution": {
+        "count": 6,
+        "avg_ms": 0.9658336639404297,
+        "min_ms": 0.14734268188476562,
+        "max_ms": 2.737283706665039
+      }
+    }
+  },
+  "performance": {
+    "task": {
+      "count": 6,
+      "avg_duration_ms": 0.9658336639404297,
+      "min_duration_ms": 0.14734268188476562,
+      "max_duration_ms": 2.737283706665039,
+      "p95_duration_ms": 2.737283706665039,
+      "p99_duration_ms": 2.737283706665039
+    },
+    "test": {
+      "count": 1,
+      "avg_duration_ms": 10.155916213989258,
+      "min_duration_ms": 10.155916213989258,
+      "max_duration_ms": 10.155916213989258,
+      "p95_duration_ms": 10.155916213989258,
+      "p99_duration_ms": 10.155916213989258
+    }
+  },
+  "health": {
+    "overall_healthy": false,
+    "checks": {
+      "basic_functionality": {
+        "healthy": true,
+        "last_checked": "2025-08-14T00:12:29.614663",
+        "check_duration_ms": 0.0007152557373046875,
+        "error": null
+      },
+      "memory_usage": {
+        "healthy": false,
+        "last_checked": "2025-08-14T00:12:29.614891",
+        "check_duration_ms": 0,
+        "error": "No module named 'psutil'"
+      }
+    },
+    "timestamp": "2025-08-14T00:12:29.614900"
+  },
+  "active_alerts": [],
+  "timestamp": "2025-08-14T00:12:29.614907"
+}
