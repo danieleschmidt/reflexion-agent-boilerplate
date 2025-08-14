@@ -1,0 +1,66 @@
+{
+  "timestamp": 1755130520.5713522,
+  "performance_optimization": {
+    "caching_enabled": true,
+    "cache_stats": {
+      "hits": 11,
+      "misses": 19,
+      "evictions": 107,
+      "size": 500,
+      "hit_rate": 0.36666666666666664,
+      "total_requests": 30
+    },
+    "concurrent_execution": true,
+    "adaptive_throttling": true,
+    "uptime_seconds": 0.03638720512390137
+  },
+  "monitoring": {
+    "task_metrics": {
+      "counters": {
+        "task_total": 30.0,
+        "task_success": 18.0,
+        "task_errors": 12.0,
+        "error_task_failure": 12.0
+      },
+      "gauges": {},
+      "histograms": {},
+      "timers": {
+        "task_execution": {
+          "count": 30,
+          "avg_ms": 0.5102396011352539,
+          "min_ms": 0.06628036499023438,
+          "max_ms": 2.404451370239258
+        }
+      }
+    },
+    "health_status": {
+      "overall_healthy": false,
+      "checks": {
+        "basic_functionality": {
+          "healthy": true,
+          "last_checked": "2025-08-14T00:15:20.571057",
+          "check_duration_ms": 0.001430511474609375,
+          "error": null
+        },
+        "memory_usage": {
+          "healthy": false,
+          "last_checked": "2025-08-14T00:15:20.571326",
+          "check_duration_ms": 0,
+          "error": "No module named 'psutil'"
+        }
+      },
+      "timestamp": "2025-08-14T00:15:20.571340"
+    },
+    "performance_data": {
+      "task": {
+        "count": 30,
+        "avg_duration_ms": 0.5102396011352539,
+        "min_duration_ms": 0.06628036499023438,
+        "max_duration_ms": 2.404451370239258,
+        "p95_duration_ms": 1.0514259338378906,
+        "p99_duration_ms": 2.404451370239258
+      }
+    }
+  },
+  "recommendations": []
+}
