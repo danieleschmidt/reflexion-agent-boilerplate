@@ -1,54 +1,86 @@
-# Multi-stage build for production optimization
-FROM python:3.11-slim as base
+# Multi-stage production Dockerfile for Reflexion Agent
+FROM python:3.12-slim as base
 
 # Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PIP_NO_CACHE_DIR=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
     curl \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
-
-# Production stage
-FROM base as production
-
-
-# Create non-root user for security
-RUN groupadd -r reflexion && useradd -r -g reflexion reflexion
+# Create app user for security
+RUN groupadd -r appuser && useradd -r -g appuser appuser
 
 # Set working directory
 WORKDIR /app
 
-# Copy application code
-COPY src/ /app/src/
-COPY examples/ /app/examples/
-COPY README.md /app/
-COPY pyproject.toml /app/
+# Copy requirements first for better caching
+COPY pyproject.toml ./
+COPY README.md ./
 
-# Install the package
-RUN pip install -e .
+# Development stage
+FROM base as development
+
+# Install development dependencies
+RUN pip install -e ".[dev,all]"
+
+# Copy source code
+COPY . .
+
+# Change ownership to app user
+RUN chown -R appuser:appuser /app
+USER appuser
+
+# Expose development ports
+EXPOSE 8000 8001
+
+CMD ["python", "-m", "reflexion.api.main", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+# Testing stage
+FROM development as testing
+
+# Switch back to root for test setup
+USER root
+
+# Install additional test dependencies
+RUN pip install pytest-xdist pytest-cov pytest-benchmark
+
+# Run tests
+RUN python -m pytest tests/ -v --cov=src/reflexion --cov-report=xml --cov-report=term-missing
+
+# Production stage
+FROM base as production
+
+# Install only production dependencies
+RUN pip install --no-deps /app
+
+# Copy only necessary source files
+COPY src/ /app/src/
+COPY deployment/entrypoint.sh /app/entrypoint.sh
+COPY deployment/healthcheck.py /app/healthcheck.py
+
+# Create necessary directories
+RUN mkdir -p /app/logs /app/cache /app/models /app/tmp
+
+# Make scripts executable
+RUN chmod +x /app/entrypoint.sh
+
+# Security hardening
+RUN chown -R appuser:appuser /app
+USER appuser
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "from src.reflexion.core.security import health_checker; \
-                   import sys; \
-                   result = health_checker.run_health_checks(); \
-                   sys.exit(0 if result['overall_status'] == 'healthy' else 1)"
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD python /app/healthcheck.py
 
-# Security: Switch to non-root user
-USER reflexion
+# Expose production ports
+EXPOSE 8000 8001
 
-# Expose port
-EXPOSE 8000
-
-# Default command
-CMD ["python", "-m", "uvicorn", "src.reflexion.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Use entrypoint script
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["python", "-m", "reflexion.api.main", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
