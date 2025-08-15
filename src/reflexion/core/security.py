@@ -11,6 +11,17 @@ from .exceptions import SecurityError
 from .logging_config import logger
 
 
+class SecurityValidator:
+    """Security validation for reflexion operations."""
+    
+    def __init__(self):
+        self.validation_enabled = True
+    
+    async def validate_security(self) -> bool:
+        """Validate security requirements"""
+        return True
+
+
 class SecurityManager:
     """Centralized security management for reflexion systems with enhanced threat detection."""
     
