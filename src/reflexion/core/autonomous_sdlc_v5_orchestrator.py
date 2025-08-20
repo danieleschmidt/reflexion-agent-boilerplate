@@ -266,9 +266,19 @@ class AutonomousSDLCv5Orchestrator:
         
         try:
             # Initialize neural learning from historical data
+            bootstrap_result = ReflexionResult(
+                task="bootstrap_learning",
+                output="Neural adaptation engine bootstrap initialization",
+                success=True,
+                iterations=1,
+                reflections=[],
+                total_time=0.5,
+                metadata={"bootstrap": True}
+            )
+            
             historical_learning = await self.neural_engine.learn_from_execution(
                 execution_context={"bootstrap": True, "project_path": self.project_path},
-                execution_result=ReflexionResult(success=True, output="bootstrap_learning"),
+                execution_result=bootstrap_result,
                 performance_metrics=QualityMetrics(code_quality_score=0.8)
             )
             
