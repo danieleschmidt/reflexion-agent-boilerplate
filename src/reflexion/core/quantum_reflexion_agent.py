@@ -773,3 +773,46 @@ class QuantumReflexionAgent(ReflexionAgent):
             }
         
         return benchmark_results
+    
+    async def execute_with_quantum_reflexion(self, task: str, **kwargs) -> ReflexionResult:
+        """
+        Execute task with quantum-enhanced reflexion capabilities.
+        Main method called by the autonomous SDLC engine.
+        """
+        try:
+            self.logger.info(f"🔮 Executing quantum reflexion for task: {task}")
+            
+            # Use the quantum_run method which provides quantum enhancement
+            result = await self.quantum_run(
+                task=task,
+                success_criteria=kwargs.get('success_criteria'),
+                algorithm_ensemble=kwargs.get('algorithm_ensemble', True),
+                **kwargs
+            )
+            
+            # Add quantum-specific metadata if not present
+            if 'quantum_metrics' not in result.metadata:
+                result.metadata['quantum_metrics'] = {
+                    'quantum_enhanced': True,
+                    'superposition_states': self.quantum_states,
+                    'entanglement_strength': self.entanglement_strength,
+                    'quantum_score': self.quantum_metrics.calculate_quantum_score()
+                }
+            
+            self.logger.info(f"✅ Quantum reflexion completed successfully")
+            return result
+            
+        except Exception as e:
+            self.logger.error(f"❌ Quantum reflexion failed: {e}")
+            
+            # Graceful fallback to classical reflexion
+            self.logger.info("🔄 Falling back to classical reflexion")
+            classical_result = await asyncio.to_thread(
+                self.run, task, kwargs.get('success_criteria', None)
+            )
+            
+            # Mark as fallback in metadata
+            classical_result.metadata['quantum_fallback'] = True
+            classical_result.metadata['quantum_error'] = str(e)
+            
+            return classical_result
