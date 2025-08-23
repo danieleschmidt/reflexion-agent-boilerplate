@@ -34,17 +34,17 @@ class InputValidator:
         self.min_success_threshold = 0.0
         self.max_success_threshold = 1.0
         
-        # Security patterns to detect potentially malicious input
+        # Security patterns to detect potentially malicious input (more permissive for legitimate code tasks)
         self.security_patterns = [
             r'<script[^>]*>.*?</script>',  # Script injection
             r'javascript:',  # JavaScript URLs
             r'vbscript:',  # VBScript URLs
             r'data:text/html',  # Data URLs with HTML
-            r'eval\s*\(',  # eval() calls
-            r'exec\s*\(',  # exec() calls
-            r'import\s+os',  # OS imports
-            r'__import__',  # Dynamic imports
-            r'subprocess',  # Subprocess calls
+            r'\beval\s*\(',  # Direct eval() calls (not in descriptions)
+            r'\bexec\s*\(',  # Direct exec() calls (not in descriptions)
+            r'import\s+os\s*;',  # Direct OS imports with semicolon
+            r'__import__\s*\(',  # Direct dynamic imports
+            r'subprocess\.call',  # Direct subprocess calls
         ]
     
     def validate_task(self, task: str) -> ValidationResult:

@@ -1,38 +1,80 @@
 [
   {
-    "episode_id": "1313680898047298247",
-    "task": "Create a simple calculator function",
+    "episode_id": "-2811486213736306621",
+    "task": "Write a sorting algorithm",
     "success": true,
     "iterations": 1,
     "reflections": [],
-    "total_time": 0.0008463859558105469,
-    "timestamp": "2025-08-14T00:16:18.177909",
+    "total_time": 0.0007426738739013672,
+    "timestamp": "2025-08-23T07:05:28.348796",
     "metadata": {
-      "example": "with_memory"
+      "example_run": true,
+      "task_index": 0
     }
   },
   {
-    "episode_id": "-2449519201487344284",
-    "task": "Write a function to reverse a string",
+    "episode_id": "5582393440204658324",
+    "task": "Implement a binary search function",
     "success": true,
     "iterations": 1,
     "reflections": [],
-    "total_time": 0.000743865966796875,
-    "timestamp": "2025-08-14T00:16:18.179268",
+    "total_time": 0.0007317066192626953,
+    "timestamp": "2025-08-23T07:05:28.350290",
     "metadata": {
-      "example": "with_memory"
+      "example_run": true,
+      "task_index": 1
     }
   },
   {
-    "episode_id": "-2240800140577522726",
-    "task": "Implement binary search algorithm",
+    "episode_id": "8277266333468410897",
+    "task": "Create a data structure for storing key-value pairs",
+    "success": false,
+    "iterations": 3,
+    "reflections": [
+      {
+        "issues": [
+          "Output lacks clear completion indicators"
+        ],
+        "improvements": [
+          "Clearly state when task is completed",
+          "Use explicit success language"
+        ],
+        "confidence": 0.66,
+        "score": 0.76
+      },
+      {
+        "issues": [
+          "Output lacks clear completion indicators",
+          "Previous attempt (iteration 1) also failed"
+        ],
+        "improvements": [
+          "Clearly state when task is completed",
+          "Use explicit success language",
+          "Try a fundamentally different approach",
+          "Consider breaking down the task into smaller steps"
+        ],
+        "confidence": 0.75,
+        "score": 0.76
+      }
+    ],
+    "total_time": 0.002761363983154297,
+    "timestamp": "2025-08-23T07:05:28.353553",
+    "metadata": {
+      "example_run": true,
+      "task_index": 2
+    }
+  },
+  {
+    "episode_id": "7311237202430555066",
+    "task": "Write a function to find duplicates in a list",
     "success": true,
     "iterations": 1,
     "reflections": [],
-    "total_time": 0.0007710456848144531,
-    "timestamp": "2025-08-14T00:16:18.180582",
+    "total_time": 0.0007641315460205078,
+    "timestamp": "2025-08-23T07:05:28.355087",
     "metadata": {
-      "example": "with_memory"
+      "example_run": true,
+      "task_index": 3
     }
   }
 ]

@@ -103,7 +103,7 @@ def demonstrate_optimized_performance():
     print(f"Average per task: {total_time/len(tasks):.3f}s")
     print(f"Success rate: {sum(1 for r in results if r.success)}/{len(results)}")
     print(f"Cache hit rate: {stats['cache_stats']['hit_rate']:.1%}")
-    print(f"Cache utilization: {stats['cache_stats']['utilization']:.1%}")
+    print(f"Cache utilization: {stats['cache_stats'].get('utilization', 0.0):.1%}")
     
     return results, stats
 

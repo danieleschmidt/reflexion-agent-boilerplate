@@ -78,17 +78,17 @@ class SmartCache:
     def _hash_key(self, obj: Any) -> str:
         """Generate cache key from object."""
         if isinstance(obj, str):
-            return hashlib.md5(obj.encode()).hexdigest()
+            return hashlib.md5(obj.encode(), usedforsecurity=False).hexdigest()
         elif isinstance(obj, dict):
             # Sort keys for consistent hashing
             sorted_items = sorted(obj.items())
-            return hashlib.md5(str(sorted_items).encode()).hexdigest()
+            return hashlib.md5(str(sorted_items).encode(), usedforsecurity=False).hexdigest()
         else:
             # Try to pickle for complex objects
             try:
-                return hashlib.md5(pickle.dumps(obj)).hexdigest()
+                return hashlib.md5(pickle.dumps(obj), usedforsecurity=False).hexdigest()
             except:
-                return hashlib.md5(str(obj).encode()).hexdigest()
+                return hashlib.md5(str(obj).encode(), usedforsecurity=False).hexdigest()
     
     def _estimate_size(self, obj: Any) -> int:
         """Estimate memory size of object."""
