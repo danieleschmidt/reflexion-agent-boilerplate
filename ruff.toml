@@ -100,4 +100,4 @@ ensure_newline_before_comments = true
 [format]
 quote-style = "double"
 indent-style = "space"
-respect-gitignore = true
+# Configuration for ruff formatting

@@ -1,36 +1,12 @@
 [
   {
-    "episode_id": "-6182372505281316212",
-    "task": "Task 0",
+    "episode_id": "1829076833532261313",
+    "task": "Test task",
     "success": true,
     "iterations": 1,
     "reflections": [],
-    "total_time": 0.0007669925689697266,
-    "timestamp": "2025-08-08T03:15:01.249134",
-    "metadata": {
-      "test": true
-    }
-  },
-  {
-    "episode_id": "-4214922790404235672",
-    "task": "Task 1",
-    "success": true,
-    "iterations": 1,
-    "reflections": [],
-    "total_time": 0.000640869140625,
-    "timestamp": "2025-08-08T03:15:01.250279",
-    "metadata": {
-      "test": true
-    }
-  },
-  {
-    "episode_id": "-7611937035423371658",
-    "task": "Task 2",
-    "success": true,
-    "iterations": 1,
-    "reflections": [],
-    "total_time": 0.000782012939453125,
-    "timestamp": "2025-08-08T03:15:01.251579",
+    "total_time": 0.1,
+    "timestamp": "2025-08-23T07:06:32.287538",
     "metadata": {
       "test": true
     }
